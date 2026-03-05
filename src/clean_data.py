@@ -28,34 +28,63 @@ def clean_dataframe(df_raw: pd.DataFrame, target_column: str) -> pd.DataFrame:
     # --------------------------------------------------------
     # START STUDENT CODE
     # --------------------------------------------------------
-    # TODO_STUDENT: Paste your notebook cleaning logic here to replace or extend the baseline
-    # Why: Cleaning varies by dataset quality, schema quirks, and business definitions.
-    # Examples:
-    # 1. Convert 'TotalCharges' from object to numeric and handle blanks (Telco churn dataset)
-    # 2. Map target labels (e.g., 'Yes'/'No') to 1/0 for classification
-    #
-    # Telco churn notebook-style logic (safe-guarded so dummy dataset still works):
-    if "TotalCharges" in df_clean.columns:
-        # In Telco churn CSV, TotalCharges can contain blanks like " "
-        df_clean["TotalCharges"] = df_clean["TotalCharges"].replace(" ", np.nan)
-        df_clean["TotalCharges"] = pd.to_numeric(df_clean["TotalCharges"], errors="coerce")
-        if df_clean["TotalCharges"].isna().any():
-            median_val = df_clean["TotalCharges"].median()
-            df_clean["TotalCharges"] = df_clean["TotalCharges"].fillna(median_val)
+    # Generalized Data Cleaning Strategy
+    
+    # 1. Handle string blanks across the entire dataframe
+    # Replace empty strings or pure whitespace with NaN
+    for col in df_clean.select_dtypes(include=['object', 'string']).columns:
+        # Strip string columns. .str.strip() safely ignores genuine NaNs
+        df_clean[col] = df_clean[col].str.strip().replace("", np.nan)
+        # Handle literal "nan" or "<NA>" strings that might emerge from CSV loading
+        df_clean[col] = df_clean[col].replace({"nan": np.nan, "<NA>": np.nan, "None": np.nan, "None": np.nan, "null": np.nan})
 
-    if "customerID" in df_clean.columns:
-        # customerID is an identifier, not a predictive feature in most churn notebooks
-        df_clean = df_clean.drop(columns=["customerID"])
+    # 2. Attempt to convert object/string columns to numeric
+    # This generalizing "TotalCharges" conversion for any similar columns.
+    for col in df_clean.select_dtypes(include=['object', 'string']).columns:
+        if col != target_column:
+            # We check if dropping NaNs leaves us with values that *could* be numeric
+            # A simple heuristic: try to_numeric; if it succeeds with reasonable NaNs, keep it
+            s_numeric = pd.to_numeric(df_clean[col], errors="coerce")
+            
+            # If converting to numeric doesn't create MORE NaNs than already existed 
+            # (or only introduces a few due to edge-case dirty data), we convert it.
+            # Here, if we successfully converted >50% of the non-null data, we keep the numeric version.
+            not_null_count_before = df_clean[col].notna().sum()
+            not_null_count_after = s_numeric.notna().sum()
+            
+            if not_null_count_before > 0 and (not_null_count_after / not_null_count_before) > 0.5:
+                df_clean[col] = s_numeric
 
+    # 3. Fill missing numerical values with Median
+    # Generalized to all numerical columns
+    for col in df_clean.select_dtypes(include=['number']).columns:
+        if df_clean[col].isna().any():
+            median_val = df_clean[col].median()
+            df_clean[col] = df_clean[col].fillna(median_val)
+
+    # 4. Drop ID-like columns
+    # Identifying ID-like columns: high cardinality categorical columns.
+    # E.g., if >90% of values are unique, it's likely an identifier (like customerID).
+    cols_to_drop = []
+    for col in df_clean.select_dtypes(include=['object', 'string']).columns:
+        if col != target_column:
+            num_unique = df_clean[col].nunique()
+            num_total = df_clean[col].notna().sum()
+            if num_total > 0 and (num_unique / num_total) > 0.90:
+                cols_to_drop.append(col)
+    
+    if cols_to_drop:
+        print(f"[clean_data.clean_dataframe] Dropping high-cardinality/ID columns: {cols_to_drop}")
+        df_clean = df_clean.drop(columns=cols_to_drop)
+
+    # 5. Target mapping (Specific to Yes/No, can be generalized easily if needed)
     if target_column in df_clean.columns:
-        # Typical notebook mapping for Telco churn: Yes/No -> 1/0
         is_text_type = pd.api.types.is_object_dtype(df_clean[target_column]) or pd.api.types.is_string_dtype(df_clean[target_column])
         if is_text_type:
-            if set(df_clean[target_column].dropna().unique()).issubset({"Yes", "No"}):
-                df_clean[target_column] = df_clean[target_column].map({"No": 0, "Yes": 1})
-                
-                # In newer pandas with string extension types, map can return Object dtype. 
-                # to_numeric safely forces it to float64/Int64 when converted values are numeric.
+            # Check for Yes/No (boolean representations)
+            if set(df_clean[target_column].dropna().unique()).issubset({"Yes", "No", "True", "False"}):
+                mapping = {"No": 0, "Yes": 1, "False": 0, "True": 1}
+                df_clean[target_column] = df_clean[target_column].map(mapping)
                 df_clean[target_column] = pd.to_numeric(df_clean[target_column], errors="coerce")
     # --------------------------------------------------------
     # END STUDENT CODE

@@ -21,60 +21,91 @@ def test_clean_dataframe_identity():
     pd.testing.assert_frame_equal(df_raw, df_clean)
 
 
-def test_clean_dataframe_total_charges():
+def test_clean_dataframe_generalized_string_blanks():
     """
-    Test that 'TotalCharges' is converted to numeric, " " replaced with NaN, and filled with median.
+    Test that empty strings and strings of spaces are replaced by NaN.
     """
     df_raw = pd.DataFrame({
-        "TotalCharges": ["10.5", " ", "20.5", None],
+        "col1": ["a", " ", "", "a", "nan"], # 'a' is repeated so uniqueness isn't 100%
+        "target": ["No", "No", "No", "No", "No"]
+    })
+    
+    df_clean = clean_dataframe(df_raw, target_column="target")
+    
+    expected_col1 = pd.Series(["a", np.nan, np.nan, "a", np.nan], name="col1")
+    # the dtype might remain object for mixed strings, so we don't strictly assert dtype unless needed
+    pd.testing.assert_series_equal(df_clean["col1"], expected_col1)
+
+
+def test_clean_dataframe_generalized_numeric_conversion():
+    """
+    Test that a string column that's mostly numeric gets converted and filled.
+    """
+    # 3 valid numerics, 1 empty string (which becomes NaN then median)
+    df_raw = pd.DataFrame({
+        "mixed_num": ["10.5", " ", "20.5", "15.5"], 
         "target": ["Yes", "No", "Yes", "No"]
     })
     
-    # The valid numerical values are 10.5 and 20.5. Median is 15.5.
-    # " " and None become NaN, then filled with 15.5.
     df_clean = clean_dataframe(df_raw, target_column="target")
     
-    expected_charges = pd.Series([10.5, 15.5, 20.5, 15.5], name="TotalCharges")
+    # median of [10.5, 20.5, 15.5] is 15.5
+    expected_charges = pd.Series([10.5, 15.5, 20.5, 15.5], name="mixed_num")
     
-    pd.testing.assert_series_equal(df_clean["TotalCharges"], expected_charges)
+    pd.testing.assert_series_equal(df_clean["mixed_num"], expected_charges)
 
 
-def test_clean_dataframe_drops_customer_id():
+def test_clean_dataframe_drops_high_cardinality():
     """
-    Test that 'customerID' is dropped.
+    Test that columns with >90% unique string values are dropped (e.g. IDs).
     """
     df_raw = pd.DataFrame({
-        "customerID": ["ID1", "ID2"],
-        "feature1": [1, 2],
-        "target": ["Yes", "No"]
+        "id_col": [f"ID_{i}" for i in range(100)], # 100% unique
+        "feature1": [1] * 100,
+        "target": ["Yes"] * 50 + ["No"] * 50
     })
     
     df_clean = clean_dataframe(df_raw, target_column="target")
     
-    assert "customerID" not in df_clean.columns
+    assert "id_col" not in df_clean.columns
     assert "feature1" in df_clean.columns
 
 
 def test_clean_dataframe_target_mapping():
     """
-    Test that target column is mapped from Yes/No to 1/0.
+    Test that target column is mapped from Yes/No/True/False to 1/0.
     """
     df_raw = pd.DataFrame({
-        "target": ["Yes", "No", "No", "Yes", np.nan]
+        "target": ["Yes", "No", "False", "True", np.nan]
     })
     
     df_clean = clean_dataframe(df_raw, target_column="target")
     
-    # "Yes" -> 1.0, "No" -> 0.0, np.nan -> np.nan -> mapped properly usually implies float when NaN is present 
-    # But note: .map() with NaN might leave it as NaN, converting dtype to float64
     expected_target = pd.Series([1.0, 0.0, 0.0, 1.0, np.nan], name="target", dtype="float64")
     
     pd.testing.assert_series_equal(df_clean["target"], expected_target)
 
 
+def test_clean_dataframe_drops_multiple_ids():
+    """
+    Test that multiple columns with >90% unique string values are dropped.
+    """
+    df_raw = pd.DataFrame({
+        "id_col_1": [f"ID_{i}" for i in range(100)], # 100% unique
+        "id_col_2": [f"UUID_{i}" for i in range(100)], # 100% unique
+        "feature1": [1, 2, 1, 2] * 25, # Not unique
+        "target": ["Yes"] * 50 + ["No"] * 50
+    })
+    
+    df_clean = clean_dataframe(df_raw, target_column="target")
+    
+    assert "id_col_1" not in df_clean.columns
+    assert "id_col_2" not in df_clean.columns
+    assert "feature1" in df_clean.columns
+
 def test_clean_dataframe_target_mapping_ignores_other_values():
     """
-    Test that target column mapping doesn't apply if values are not subset of Yes/No.
+    Test that target column mapping doesn't apply if values are not subset of acceptable booleans.
     """
     df_raw = pd.DataFrame({
         "my_target": ["Maybe", "No", "Yes"]
@@ -82,5 +113,24 @@ def test_clean_dataframe_target_mapping_ignores_other_values():
     
     df_clean = clean_dataframe(df_raw, target_column="my_target")
     
-    # Should remain unchanged since it's not a subset of {"Yes", "No"}
     pd.testing.assert_series_equal(df_raw["my_target"], df_clean["my_target"])
+
+def test_clean_dataframe_handles_all_nans_gracefully():
+    """
+    Test that a dataframe with entirely null columns doesn't crash the logic.
+    """
+    df_raw = pd.DataFrame({
+        "all_null_str": [np.nan, None, pd.NA],
+        "all_null_num": [np.nan, np.nan, np.nan],
+        "target": ["Yes", "No", "Yes"]
+    })
+    
+    df_clean = clean_dataframe(df_raw, target_column="target")
+    
+    # Target should still be handled
+    expected_target = pd.Series([1.0, 0.0, 1.0], name="target", dtype="float64")
+    pd.testing.assert_series_equal(df_clean["target"], expected_target)
+
+    # Empty columns might stay in, but shouldn't have crashed median/to_numeric logic
+    assert "all_null_str" in df_clean.columns
+    assert "all_null_num" in df_clean.columns
