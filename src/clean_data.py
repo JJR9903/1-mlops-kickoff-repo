@@ -57,3 +57,15 @@ def clean_dataframe(df_raw: pd.DataFrame, target_column: str) -> pd.DataFrame:
     # --------------------------------------------------------
 
     return df_clean
+
+
+if __name__ == "__main__":
+    from pathlib import Path
+    from src.load_data import load_raw_data
+
+    df_raw = load_raw_data(Path("data/raw/telco.csv"))
+    df_clean = clean_dataframe(df_raw, target_column="target")
+
+    print("Raw shape:", df_raw.shape)
+    print("Clean shape:", df_clean.shape)
+    print(df_clean.head())
