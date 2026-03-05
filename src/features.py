@@ -7,11 +7,19 @@ Output: scikit-learn ColumnTransformer object.
 
 """
 
+"""
+Educational Goal:
+- Why this module exists in an MLOps system: Centralizes feature engineering logic to prevent data leakage and ensure consistent preprocessing between training and inference.
+- Responsibility (separation of concerns): Define feature transformation recipe only (no fitting, no data mutation).
+- Pipeline contract (inputs and outputs): Configuration lists in → ColumnTransformer recipe out.
+
+TODO: Replace print statements with standard library logging in a later session
+TODO: Any temporary or hardcoded variable or parameter will be imported from config.yml in a later session
+"""
+
 from typing import Optional, List
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
 
 
 def get_feature_preprocessor(
@@ -22,18 +30,18 @@ def get_feature_preprocessor(
 ):
     """
     Inputs:
-    - quantile_bin_cols: numeric columns for quantile binning
+    - quantile_bin_cols: numeric columns to apply quantile binning
     - categorical_onehot_cols: categorical columns for one-hot encoding
-    - numeric_passthrough_cols: numeric columns to pass through
-    - n_bins: number of bins for KBinsDiscretizer
+    - numeric_passthrough_cols: numeric columns to pass through unchanged
+    - n_bins: number of quantile bins
     Outputs:
     - ColumnTransformer (unfitted)
     Why this contract matters for reliable ML delivery:
-    - Guarantees identical preprocessing at train and inference time.
+    - Guarantees consistent preprocessing during training and inference.
     - Prevents leakage by returning a blueprint only.
     """
 
-    print("Building Telco feature preprocessing recipe...")  # TODO: replace with logging later
+    print("Building feature preprocessing recipe...")  # TODO: replace with logging later
 
     quantile_bin_cols = quantile_bin_cols or []
     categorical_onehot_cols = categorical_onehot_cols or []
@@ -41,24 +49,21 @@ def get_feature_preprocessor(
 
     transformers = []
 
-    # Quantile binning pipeline
+    # Quantile binning (numeric features)
     if quantile_bin_cols:
         transformers.append(
             (
                 "quantile_bin",
-                Pipeline([
-                    ("imputer", SimpleImputer(strategy="median")),
-                    ("kbins", KBinsDiscretizer(
-                        n_bins=n_bins,
-                        encode="ordinal",
-                        strategy="quantile"
-                    ))
-                ]),
-                quantile_bin_cols
+                KBinsDiscretizer(
+                    n_bins=n_bins,
+                    encode="ordinal",
+                    strategy="quantile"
+                ),
+                quantile_bin_cols,
             )
         )
 
-    # One-hot encoding pipeline
+    # One-hot encoding (categorical features)
     if categorical_onehot_cols:
         try:
             encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
@@ -68,23 +73,18 @@ def get_feature_preprocessor(
         transformers.append(
             (
                 "categorical_onehot",
-                Pipeline([
-                    ("imputer", SimpleImputer(strategy="most_frequent")),
-                    ("encoder", encoder)
-                ]),
-                categorical_onehot_cols
+                encoder,
+                categorical_onehot_cols,
             )
         )
 
-    # Numeric passthrough
+    # Numeric passthrough (raw numeric features)
     if numeric_passthrough_cols:
         transformers.append(
             (
                 "numeric_passthrough",
-                Pipeline([
-                    ("imputer", SimpleImputer(strategy="median"))
-                ]),
-                numeric_passthrough_cols
+                "passthrough",
+                numeric_passthrough_cols,
             )
         )
 
@@ -93,6 +93,6 @@ def get_feature_preprocessor(
         remainder="drop"
     )
 
-    print("Warning: Custom Telco feature logic not implemented yet")
+    print("Warning: Student has not implemented custom feature logic yet")
 
     return preprocessor
