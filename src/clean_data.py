@@ -1,70 +1,59 @@
 """
-Module: Data Cleaning
----------------------
-Role: Preprocessing, missing value imputation, and feature engineering.
-Input: pandas.DataFrame (Raw).
-Output: pandas.DataFrame (Processed/Clean).
+Educational Goal:
+- Why this module exists in an MLOps system: Make cleaning repeatable and testable outside notebooks.
+- Responsibility (separation of concerns): Transform raw df -> clean df without training leakage.
+- Pipeline contract (inputs and outputs): df_raw + target_column -> clean DataFrame.
+
+TODO: Replace print statements with standard library logging in a later session
+TODO: Any temporary or hardcoded variable or parameter will be imported from config.yml in a later session
 """
 
-# clean_data.py
-from __future__ import annotations
-
-import argparse
-from pathlib import Path
+import numpy as np
 import pandas as pd
 
 
-def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    df.columns = (
-        df.columns.astype(str)
-        .str.strip()
-        .str.lower()
-        .str.replace(" ", "_")
-        .str.replace("-", "_")
-    )
-    return df
+def clean_dataframe(df_raw: pd.DataFrame, target_column: str) -> pd.DataFrame:
+    """
+    Inputs:
+    - df_raw: Raw dataframe.
+    - target_column: Name of the target column used for training.
+    Outputs:
+    - df_clean: Clean dataframe ready for splitting into X/y.
+    Why this contract matters for reliable ML delivery:
+    - Cleaning must be deterministic so training, evaluation, and inference behave consistently.
+    """
+    print("[clean_data.clean_dataframe] Cleaning dataframe (baseline: identity copy)")  # TODO: replace with logging later
+    df_clean = df_raw.copy(deep=True)
 
+    # --------------------------------------------------------
+    # START STUDENT CODE
+    # --------------------------------------------------------
+    # TODO_STUDENT: Paste your notebook cleaning logic here to replace or extend the baseline
+    # Why: Cleaning varies by dataset quality, schema quirks, and business definitions.
+    # Examples:
+    # 1. Convert 'TotalCharges' from object to numeric and handle blanks (Telco churn dataset)
+    # 2. Map target labels (e.g., 'Yes'/'No') to 1/0 for classification
+    #
+    # Telco churn notebook-style logic (safe-guarded so dummy dataset still works):
+    if "TotalCharges" in df_clean.columns:
+        # In Telco churn CSV, TotalCharges can contain blanks like " "
+        df_clean["TotalCharges"] = df_clean["TotalCharges"].replace(" ", np.nan)
+        df_clean["TotalCharges"] = pd.to_numeric(df_clean["TotalCharges"], errors="coerce")
+        if df_clean["TotalCharges"].isna().any():
+            median_val = df_clean["TotalCharges"].median()
+            df_clean["TotalCharges"] = df_clean["TotalCharges"].fillna(median_val)
 
-def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    df = standardize_columns(df)
+    if "customerID" in df_clean.columns:
+        # customerID is an identifier, not a predictive feature in most churn notebooks
+        df_clean = df_clean.drop(columns=["customerID"])
 
-    # Drop exact duplicate rows
-    df = df.drop_duplicates()
+    if target_column in df_clean.columns:
+        # Typical notebook mapping for Telco churn: Yes/No -> 1/0
+        if df_clean[target_column].dtype == "object":
+            if set(df_clean[target_column].dropna().unique()).issubset({"Yes", "No"}):
+                df_clean[target_column] = df_clean[target_column].map({"No": 0, "Yes": 1})
+    # --------------------------------------------------------
+    # END STUDENT CODE
+    # --------------------------------------------------------
 
-    # Trim whitespace for object columns
-    obj_cols = df.select_dtypes(include="object").columns
-    for c in obj_cols:
-        df[c] = df[c].astype(str).str.strip()
-
-    # Example: convert obvious date columns if present
-    for c in df.columns:
-        if "date" in c:
-            df[c] = pd.to_datetime(df[c], errors="coerce")
-
-    return df
-
-
-def save_processed(df: pd.DataFrame, out_path: Path) -> None:
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(out_path, index=False)
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--in", dest="in_path", required=True, help="Path to raw parquet file")
-    parser.add_argument("--out", required=True, help="Path to write cleaned parquet file")
-    args = parser.parse_args()
-
-    in_path = Path(args.in_path)
-    out_path = Path(args.out)
-
-    df = pd.read_parquet(in_path)
-    cleaned = clean_data(df)
-    save_processed(cleaned, out_path)
-
-    print(f"Cleaned: {len(df):,} → {len(cleaned):,} rows. Saved to {out_path}")
-
-
-if __name__ == "__main__":
-    main()
+    return df_clean
