@@ -49,9 +49,14 @@ def clean_dataframe(df_raw: pd.DataFrame, target_column: str) -> pd.DataFrame:
 
     if target_column in df_clean.columns:
         # Typical notebook mapping for Telco churn: Yes/No -> 1/0
-        if df_clean[target_column].dtype == "object":
+        is_text_type = pd.api.types.is_object_dtype(df_clean[target_column]) or pd.api.types.is_string_dtype(df_clean[target_column])
+        if is_text_type:
             if set(df_clean[target_column].dropna().unique()).issubset({"Yes", "No"}):
                 df_clean[target_column] = df_clean[target_column].map({"No": 0, "Yes": 1})
+                
+                # In newer pandas with string extension types, map can return Object dtype. 
+                # to_numeric safely forces it to float64/Int64 when converted values are numeric.
+                df_clean[target_column] = pd.to_numeric(df_clean[target_column], errors="coerce")
     # --------------------------------------------------------
     # END STUDENT CODE
     # --------------------------------------------------------

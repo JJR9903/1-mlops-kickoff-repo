@@ -67,7 +67,7 @@ def test_clean_dataframe_target_mapping():
     
     # "Yes" -> 1.0, "No" -> 0.0, np.nan -> np.nan -> mapped properly usually implies float when NaN is present 
     # But note: .map() with NaN might leave it as NaN, converting dtype to float64
-    expected_target = pd.Series([1.0, 0.0, 0.0, 1.0, np.nan], name="target")
+    expected_target = pd.Series([1.0, 0.0, 0.0, 1.0, np.nan], name="target", dtype="float64")
     
     pd.testing.assert_series_equal(df_clean["target"], expected_target)
 
