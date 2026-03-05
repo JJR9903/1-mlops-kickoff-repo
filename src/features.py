@@ -19,7 +19,8 @@ TODO: Any temporary or hardcoded variable or parameter will be imported from con
 
 from typing import Optional, List
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder
+from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder, FunctionTransformer
+import numpy as np
 
 
 def get_feature_preprocessor(
@@ -49,21 +50,50 @@ def get_feature_preprocessor(
 
     transformers = []
 
-    # Quantile binning (numeric features)
-    if quantile_bin_cols:
+
+    # Business Tenure Buckets
+    def tenure_bucket(X):
+        tenure = X.iloc[:, 0]
+        return np.where(
+            tenure < 6, 2,              # high risk
+            np.where(tenure < 12, 1, 0) # medium / low
+        ).reshape(-1, 1)
+
+    if "tenure" in quantile_bin_cols:
         transformers.append(
             (
-                "quantile_bin",
-                KBinsDiscretizer(
-                    n_bins=n_bins,
-                    encode="ordinal",
-                    strategy="quantile"
-                ),
-                quantile_bin_cols,
+                "tenure_risk_bucket",
+                FunctionTransformer(tenure_bucket, validate=False),
+                ["tenure"],
             )
         )
 
-    # One-hot encoding (categorical features)
+
+    # Service Count Feature
+
+    service_columns = [
+        "OnlineSecurity",
+        "OnlineBackup",
+        "DeviceProtection",
+        "TechSupport",
+        "StreamingTV",
+        "StreamingMovies"
+    ]
+
+    def service_count(X):
+        return X.apply(lambda row: (row == "Yes").sum(), axis=1).values.reshape(-1, 1)
+
+    transformers.append(
+        (
+            "service_count",
+            FunctionTransformer(service_count, validate=False),
+            service_columns,
+        )
+    )
+
+
+    # One-Hot Encoding
+
     if categorical_onehot_cols:
         try:
             encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
@@ -78,7 +108,9 @@ def get_feature_preprocessor(
             )
         )
 
-    # Numeric passthrough (raw numeric features)
+
+    # Numeric passthrough
+
     if numeric_passthrough_cols:
         transformers.append(
             (
@@ -93,6 +125,6 @@ def get_feature_preprocessor(
         remainder="drop"
     )
 
-    print("Warning: Student has not implemented custom feature logic yet")
+    print("Business-driven churn features added")
 
     return preprocessor
