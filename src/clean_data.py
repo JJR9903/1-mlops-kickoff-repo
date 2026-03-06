@@ -85,7 +85,7 @@ def clean_dataframe(df_raw: pd.DataFrame, target_column: str) -> pd.DataFrame:
             if set(df_clean[target_column].dropna().unique()).issubset({"Yes", "No", "True", "False"}):
                 mapping = {"No": 0, "Yes": 1, "False": 0, "True": 1}
                 df_clean[target_column] = df_clean[target_column].map(mapping)
-                df_clean[target_column] = pd.to_numeric(df_clean[target_column], errors="coerce")
+                df_clean[target_column] = pd.to_numeric(df_clean[target_column], errors="coerce").astype("float64")
     # --------------------------------------------------------
     # END STUDENT CODE
     # --------------------------------------------------------
