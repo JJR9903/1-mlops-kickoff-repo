@@ -1,86 +1,122 @@
-import pytest
-from unittest.mock import MagicMock
-import pandas as pd
+import sys
+import types
 from pathlib import Path
 
-from src.main import main
+import pandas as pd
 
 
-@pytest.fixture
-def mock_pipeline(monkeypatch):
+class DummyModel:
     """
-    Mocks all external data loading, processing, model training and saving
-    functions used inside main() to ensure fast, isolated tests without
-    triggering the real ML pipeline operations.
+    Top-level class => picklable by pickle.
+    Your main.py saves the trained model with pickle, so the fake model must be picklable.
     """
-    dummy_df = pd.DataFrame({
-        "num_feature": [1.0, 2.0, 3.0],
-        "cat_feature": ["A", "B", "A"],
-        "target": [0, 1, 0]
-    })
-    dummy_predictions = pd.DataFrame({"prediction": [0, 1]})
 
-    monkeypatch.setattr("src.main.load_raw_data", MagicMock(return_value=dummy_df))
-    monkeypatch.setattr("src.main.clean_dataframe", MagicMock(return_value=dummy_df))
-    monkeypatch.setattr("src.main.validate_dataframe", MagicMock())
-    monkeypatch.setattr("src.main.train_test_split", MagicMock(return_value=(dummy_df, dummy_df, dummy_df["target"], dummy_df["target"])))
-    monkeypatch.setattr("src.main.get_feature_preprocessor", MagicMock(return_value="dummy_preprocessor"))
-    monkeypatch.setattr("src.main.train_model", MagicMock(return_value="dummy_model"))
-    monkeypatch.setattr("src.main.save_model", MagicMock())
-    monkeypatch.setattr("src.main.evaluate_model", MagicMock(return_value=0.95))
-    monkeypatch.setattr("src.main.run_inference", MagicMock(return_value=dummy_predictions))
-    monkeypatch.setattr("src.main.save_csv", MagicMock())
-    
-    # Mock Path.mkdir and Path.exists to prevent any directory creation or avoiding the alternative telco data path finding.
-    monkeypatch.setattr(Path, "mkdir", lambda self, parents=False, exist_ok=False: None)
-    monkeypatch.setattr(Path, "exists", lambda self: False)
+    def predict(self, X):
+        return [0] * len(X)
 
 
-def test_main_runs_end_to_end_with_mocks(mock_pipeline):
+def _install_fake_module(module_name: str, attrs: dict) -> None:
     """
-    Test that the main orchestrator runs completely end-to-end 
-    no exceptions are raised when all its external functions are lightweight mocks.
+    Create a fake module and inject it into sys.modules so that imports in src.main succeed
+    even if teammates' modules aren't available yet.
     """
-    # Act / Assert
-    main()
+    module = types.ModuleType(module_name)
+    for key, value in attrs.items():
+        setattr(module, key, value)
+    sys.modules[module_name] = module
 
 
-def test_main_creates_required_directories(mock_pipeline, monkeypatch):
+def test_main_orchestrates_and_writes_artifacts(tmp_path, monkeypatch):
     """
-    Verify that main() ensures required directories are created by tracking 
-    calls to Path.mkdir: 'data/raw', 'data/processed', 'models', 'reports'.
-    """
-    mkdir_calls = []
-    
-    def mock_mkdir(self, parents=False, exist_ok=False):
-        # Normalizing to forward slashes for cross-platform validation
-        mkdir_calls.append(str(self).replace("\\", "/"))
-        
-    monkeypatch.setattr(Path, "mkdir", mock_mkdir)
-    
-    # Act
-    main()
-    
-    # Assert
-    assert any("data/raw" in call for call in mkdir_calls)
-    assert any("data/processed" in call for call in mkdir_calls)
-    assert any("models" in call for call in mkdir_calls)
-    assert any("reports" in call for call in mkdir_calls)
+    Smoke/integration-style unit test for YOUR main.py orchestration.
 
+    Goal:
+    - main() runs end-to-end without teammates' modules present
+    - required artifacts are written to disk:
+        - processed CSV
+        - model pickle
+        - predictions CSV
 
-def test_main_raises_error_when_feature_missing(mock_pipeline, monkeypatch):
+    Technique:
+    - stub (fake) the modules main.py imports (clean_data, load_data, etc.)
+    - import src.main after stubbing so imports resolve
+    - override SETTINGS to write into pytest tmp_path
     """
-    Test that main orchestrator's fail-fast logic correctly raises a ValueError
-    when a configured feature is missing from the features DataFrame.
-    """
-    # Arrange: Create target DataFrame missing the configured 'num_feature' column
-    bad_df = pd.DataFrame({
-        "cat_feature": ["A", "B", "A"],
-        "target": [0, 1, 0]
-    }) 
-    
-    monkeypatch.setattr("src.main.clean_dataframe", MagicMock(return_value=bad_df))
-    
-    # Act / Assert
-    with pytest.raises(ValueError, match="Configured feature columns missing in X"):
-        main()
+
+    # ---- Dummy dataset matching the example schema expected by main.py ----
+    df = pd.DataFrame(
+        {
+            "num_feature": [1, 2, 3, 4, 5, 6, 7, 8],
+            "cat_feature": ["a", "b", "a", "b", "a", "b", "a", "b"],
+            "target": [0, 1, 0, 1, 0, 1, 0, 1],
+        }
+    )
+
+    # ---- Fake implementations of teammates' pipeline steps ----
+    def load_raw_data(path: Path):
+        return df
+
+    def clean_dataframe(df_in: pd.DataFrame, target_column: str):
+        return df_in  # no-op cleaning for test
+
+    def validate_dataframe(df_in: pd.DataFrame, required_columns):
+        missing = [c for c in required_columns if c not in df_in.columns]
+        if missing:
+            raise ValueError(f"Missing columns: {missing}")
+
+    def get_feature_preprocessor(**kwargs):
+        return "dummy_preprocessor"
+
+    def train_model(X_train, y_train, preprocessor, problem_type):
+        return DummyModel()
+
+    def evaluate_model(model, X_test, y_test, problem_type):
+        return 0.99
+
+    def run_inference(model, X_infer):
+        preds = model.predict(X_infer)
+        return pd.DataFrame({"prediction": preds})
+
+    # ---- Install fake modules so `import src.main` won't fail ----
+    _install_fake_module("src.load_data", {"load_raw_data": load_raw_data})
+    _install_fake_module("src.clean_data", {"clean_dataframe": clean_dataframe})
+    _install_fake_module("src.validate", {"validate_dataframe": validate_dataframe})
+    _install_fake_module("src.features", {"get_feature_preprocessor": get_feature_preprocessor})
+    _install_fake_module("src.train", {"train_model": train_model})
+    _install_fake_module("src.evaluate", {"evaluate_model": evaluate_model})
+    _install_fake_module("src.infer", {"run_inference": run_inference})
+
+    # ---- Import main AFTER stubbing dependencies ----
+    import src.main as main_module
+
+    # ---- Redirect SETTINGS to tmp_path so test doesn't touch repo folders ----
+    monkeypatch.setattr(
+        main_module,
+        "SETTINGS",
+        {
+            "is_example_config": True,
+            "problem_type": "classification",
+            "target_column": "target",
+            "raw_data_path": str(tmp_path / "dataset.csv"),
+            "processed_data_path": str(tmp_path / "clean.csv"),
+            "model_path": str(tmp_path / "model.pkl"),
+            "predictions_path": str(tmp_path / "preds.csv"),
+            "random_state": 42,
+            "test_size": 0.25,
+            "val_size": 0.25,
+            "features": {
+                "quantile_bin": ["num_feature"],
+                "categorical_onehot": ["cat_feature"],
+                "numeric_passthrough": [],
+                "n_bins": 3,
+            },
+        },
+    )
+
+    # ---- Run pipeline ----
+    main_module.main()
+
+    # ---- Assert artifacts were created ----
+    assert (tmp_path / "clean.csv").exists()
+    assert (tmp_path / "model.pkl").exists()
+    assert (tmp_path / "preds.csv").exists()

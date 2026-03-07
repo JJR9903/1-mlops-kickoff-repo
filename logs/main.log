@@ -1,0 +1,97 @@
+2026-03-07 11:08:50 | INFO | main | Starting pipeline
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: models
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:08:50 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:08:50 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-1\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:08:50 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:08:50 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:08:50 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:08:50 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-1\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:08:50 | INFO | main | Validating required columns: ['cat_feature', 'num_feature', 'target']
+2026-03-07 11:08:50 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:08:50 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:08:50 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:08:50 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:08:50 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:08:50 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-1\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:08:50 | ERROR | main | Pipeline failed: Can't get local object 'test_main_orchestrates_and_writes_artifacts.<locals>.train_model.<locals>.DummyModel'
+Traceback (most recent call last):
+  File "C:\Users\diego\Documents\VS CODE\MLOPS\1-mlops-kickoff-repo\1-mlops-kickoff-repo\src\main.py", line 251, in main
+    save_model(model, model_path)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\diego\Documents\VS CODE\MLOPS\1-mlops-kickoff-repo\1-mlops-kickoff-repo\src\utils.py", line 79, in save_model
+    pickle.dump(model, f)
+    ~~~~~~~~~~~^^^^^^^^^^
+AttributeError: Can't get local object 'test_main_orchestrates_and_writes_artifacts.<locals>.train_model.<locals>.DummyModel'
+2026-03-07 11:13:07 | INFO | main | Starting pipeline
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: models
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:13:07 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:13:07 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-2\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:13:07 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:13:07 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:13:07 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:13:07 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-2\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:13:07 | INFO | main | Validating required columns: ['cat_feature', 'num_feature', 'target']
+2026-03-07 11:13:07 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:13:07 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:13:07 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:13:07 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:13:07 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:13:07 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-2\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:13:07 | INFO | main | Evaluating on VAL split
+2026-03-07 11:13:07 | INFO | main | Validation metric = 0.99
+2026-03-07 11:13:07 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-07 11:13:07 | INFO | main | Pipeline complete ✅
+2026-03-07 11:13:21 | INFO | main | Starting pipeline
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: models
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:13:21 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:13:21 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-3\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:13:21 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:13:21 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:13:21 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:13:21 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-3\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:13:21 | INFO | main | Validating required columns: ['cat_feature', 'num_feature', 'target']
+2026-03-07 11:13:21 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:13:21 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:13:21 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:13:21 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:13:21 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:13:21 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-3\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:13:21 | INFO | main | Evaluating on VAL split
+2026-03-07 11:13:21 | INFO | main | Validation metric = 0.99
+2026-03-07 11:13:21 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-07 11:13:21 | INFO | main | Pipeline complete ✅
+2026-03-07 11:13:37 | INFO | main | Starting pipeline
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: models
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:13:37 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:13:37 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-4\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:13:37 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:13:37 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:13:37 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:13:37 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-4\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:13:37 | INFO | main | Validating required columns: ['num_feature', 'cat_feature', 'target']
+2026-03-07 11:13:37 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:13:37 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:13:37 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:13:37 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:13:37 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:13:37 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-4\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:13:37 | INFO | main | Evaluating on VAL split
+2026-03-07 11:13:37 | INFO | main | Validation metric = 0.99
+2026-03-07 11:13:37 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-07 11:13:37 | INFO | main | Pipeline complete ✅
