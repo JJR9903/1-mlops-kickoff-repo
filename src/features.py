@@ -41,14 +41,14 @@ def get_feature_preprocessor(
 
     transformers = []
 
-    # -------------------------
-    # Business Tenure Buckets
-    # -------------------------
+    # --------------------------------------------------------
+    # Business Tenure Risk Bucket (Domain-Based Feature)
+    # --------------------------------------------------------
     def tenure_bucket(X):
         tenure = X.iloc[:, 0]
         return np.where(
-            tenure < 6, 2,
-            np.where(tenure < 12, 1, 0)
+            tenure < 6, 2,              # high churn risk
+            np.where(tenure < 12, 1, 0) # medium / low risk
         ).reshape(-1, 1)
 
     if "tenure" in quantile_bin_cols:
@@ -60,32 +60,9 @@ def get_feature_preprocessor(
             )
         )
 
-    # -------------------------
-    # Service Count Feature
-    # -------------------------
-    service_columns = [
-        "OnlineSecurity",
-        "OnlineBackup",
-        "DeviceProtection",
-        "TechSupport",
-        "StreamingTV",
-        "StreamingMovies"
-    ]
-
-    def service_count(X):
-        return X.apply(lambda row: (row == "Yes").sum(), axis=1).values.reshape(-1, 1)
-
-    transformers.append(
-        (
-            "service_count",
-            FunctionTransformer(service_count, validate=False),
-            service_columns,
-        )
-    )
-
-    # -------------------------
-    # One-Hot Encoding
-    # -------------------------
+    # --------------------------------------------------------
+    # One-Hot Encoding (Categorical Variables)
+    # --------------------------------------------------------
     if categorical_onehot_cols:
         try:
             encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
@@ -100,9 +77,9 @@ def get_feature_preprocessor(
             )
         )
 
-    # -------------------------
+    # --------------------------------------------------------
     # Numeric Passthrough
-    # -------------------------
+    # --------------------------------------------------------
     if numeric_passthrough_cols:
         transformers.append(
             (
@@ -112,28 +89,46 @@ def get_feature_preprocessor(
             )
         )
 
-    preprocessor = ColumnTransformer(
-        transformers=transformers,
-        remainder="drop"
-    )
-
     # --------------------------------------------------------
     # START STUDENT CODE
     # --------------------------------------------------------
-    # TODO_STUDENT: Extend or replace feature logic if required
+    # TODO_STUDENT: Add Telco-specific engineered features safely
     # Why: Feature engineering depends on dataset and business context.
     # Examples:
     # 1. Add revenue-per-tenure ratio
     # 2. Add contract-tenure interaction
     # 3. Add churn risk composite features
-    #
-    # Optional forcing function (leave commented)
-    # raise NotImplementedError("Student: You must implement this logic to proceed!")
-    #
-    # Placeholder:
+
+    telco_service_columns = [
+        "OnlineSecurity",
+        "OnlineBackup",
+        "DeviceProtection",
+        "TechSupport",
+        "StreamingTV",
+        "StreamingMovies"
+    ]
+
+    if all(col in categorical_onehot_cols for col in telco_service_columns):
+        def service_count(X):
+            return X.apply(lambda row: (row == "Yes").sum(), axis=1).values.reshape(-1, 1)
+
+        transformers.append(
+            (
+                "service_count",
+                FunctionTransformer(service_count, validate=False),
+                telco_service_columns,
+            )
+        )
+
     print("Warning: Student has not implemented additional custom feature logic")
     # --------------------------------------------------------
     # END STUDENT CODE
     # --------------------------------------------------------
+
+    # Build ColumnTransformer only once, after all transformers are defined
+    preprocessor = ColumnTransformer(
+        transformers=transformers,
+        remainder="drop"
+    )
 
     return preprocessor
