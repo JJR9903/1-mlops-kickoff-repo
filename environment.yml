@@ -1,0 +1,20 @@
+name: mlops_project
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - scikit-learn
+  - xgboost
+  - openpyxl
+  - joblib
+  - jupyter
+  - ipykernel
+  - pyyaml
+  - pytest
+  - pip
+  - pip:
+      - pytest-cov
+      - black
+      - flake8
