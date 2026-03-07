@@ -1,13 +1,4 @@
 """
-Module: Feature Engineering
----------------------------
-Role: Define the transformation "recipe" (binning, encoding, scaling) to be bundled with the model.
-Input: Configuration (lists of column names).
-Output: scikit-learn ColumnTransformer object.
-
-"""
-
-"""
 Educational Goal:
 - Why this module exists in an MLOps system: Centralizes feature engineering logic to prevent data leakage and ensure consistent preprocessing between training and inference.
 - Responsibility (separation of concerns): Define feature transformation recipe only (no fitting, no data mutation).
@@ -50,13 +41,14 @@ def get_feature_preprocessor(
 
     transformers = []
 
-
+    # -------------------------
     # Business Tenure Buckets
+    # -------------------------
     def tenure_bucket(X):
         tenure = X.iloc[:, 0]
         return np.where(
-            tenure < 6, 2,              # high risk
-            np.where(tenure < 12, 1, 0) # medium / low
+            tenure < 6, 2,
+            np.where(tenure < 12, 1, 0)
         ).reshape(-1, 1)
 
     if "tenure" in quantile_bin_cols:
@@ -68,9 +60,9 @@ def get_feature_preprocessor(
             )
         )
 
-
+    # -------------------------
     # Service Count Feature
-
+    # -------------------------
     service_columns = [
         "OnlineSecurity",
         "OnlineBackup",
@@ -91,9 +83,9 @@ def get_feature_preprocessor(
         )
     )
 
-
+    # -------------------------
     # One-Hot Encoding
-
+    # -------------------------
     if categorical_onehot_cols:
         try:
             encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
@@ -108,9 +100,9 @@ def get_feature_preprocessor(
             )
         )
 
-
-    # Numeric passthrough
-
+    # -------------------------
+    # Numeric Passthrough
+    # -------------------------
     if numeric_passthrough_cols:
         transformers.append(
             (
@@ -125,6 +117,23 @@ def get_feature_preprocessor(
         remainder="drop"
     )
 
-    print("Business-driven churn features added")
+    # --------------------------------------------------------
+    # START STUDENT CODE
+    # --------------------------------------------------------
+    # TODO_STUDENT: Extend or replace feature logic if required
+    # Why: Feature engineering depends on dataset and business context.
+    # Examples:
+    # 1. Add revenue-per-tenure ratio
+    # 2. Add contract-tenure interaction
+    # 3. Add churn risk composite features
+    #
+    # Optional forcing function (leave commented)
+    # raise NotImplementedError("Student: You must implement this logic to proceed!")
+    #
+    # Placeholder:
+    print("Warning: Student has not implemented additional custom feature logic")
+    # --------------------------------------------------------
+    # END STUDENT CODE
+    # --------------------------------------------------------
 
     return preprocessor
