@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer, StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 
@@ -60,12 +60,13 @@ def get_feature_preprocessor(
     transformers = []
 
     # --------------------------------------------------------
-    # 1 Numeric Pipeline (Safe Casting + Mean Imputation)
+    # 1 Numeric Pipeline (Safe Casting + Mean Imputation + Scaling)
     # --------------------------------------------------------
     if numeric_passthrough_cols:
         numeric_pipeline = Pipeline(steps=[
             ("cast_numeric", FunctionTransformer(safe_numeric_cast, validate=False)),
-            ("imputer", SimpleImputer(strategy="mean"))
+            ("imputer", SimpleImputer(strategy="mean")),
+            ("scaler", StandardScaler())
         ])
 
         transformers.append(

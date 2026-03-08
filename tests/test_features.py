@@ -103,4 +103,4 @@ def test_imputation_works():
     transformed = preprocessor.fit_transform(df)
 
     # Ensure no NaN remains after transformation
-    assert not np.isnan(transformed).any()
+    assert np.isfinite(transformed).all()
