@@ -15,12 +15,13 @@ _DTYPE_CHECKERS: Dict[str, object] = {
     "categorical": pd.api.types.is_string_dtype,
 }
 
+_VALID_TARGET_TYPES = {"classification", "regression"}
+
 
 def validate_dataframe(
     df: pd.DataFrame,
     schema: Dict[str, dict],
-    target_column: str,
-    allowed_classes: Optional[List] = None,
+    target_config: Dict[str, dict]
 ) -> bool:
     """
     Validates a cleaned DataFrame against a schema before it enters the ML pipeline.
@@ -38,9 +39,16 @@ def validate_dataframe(
                                "TotalCharges": {"type": "numeric",     "accept_nan": True},
                                "Churn":        {"type": "numeric",     "accept_nan": False},
                            }
-    - target_column  : Name of the column to predict (e.g. "Churn").
-                       Kept as a separate argument so it is structurally impossible
-                       to declare more than one target — no runtime meta-validation needed.
+    - target_config : Dict describing the target column and task type.
+                      Maps directly to a config.yaml block (step 2 ready).
+                      Required keys:
+                          "column" : str   — column name to predict
+                          "type"   : str   — "classification" or "regression"
+                      Optional keys (task-dependent):
+                          "allowed_classes" : List — classification only
+                                             e.g. [0, 1] for binary churn
+                          "range"           : [min, max] — regression only,
+                                             inclusive bounds for sanity check
     - allowed_classes: Optional list of valid values for the target column
                        (e.g. [0, 1] for a binary classifier).
                        If None, the class-membership check is skipped.
@@ -58,6 +66,24 @@ def validate_dataframe(
       self-documenting and enforced by the call signature, not by runtime logic.
     """
     print("[validate] Running data quality checks...")  # TODO: replace with logging later
+
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Validate target_config structure up front
+    # ─────────────────────────────────────────────────────────────────────────
+    target_column = target_config.get("column")
+    target_type   = target_config.get("type")
+
+    if not target_column:
+        raise ValueError(
+            "[validate] FAILED: target_config is missing required key 'column'.\n"
+            "  → e.g. target_config = {'column': 'Churn', 'type': 'classification', ...}"
+        )
+    if target_type not in _VALID_TARGET_TYPES:
+        raise ValueError(
+            f"[validate] FAILED: target_config 'type' must be one of "
+            f"{_VALID_TARGET_TYPES}, got '{target_type}'."
+        )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 1 — Empty DataFrame
@@ -148,25 +174,70 @@ def validate_dataframe(
     )  # TODO: replace with logging later
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Check 4 — Target class membership (only if allowed_classes is provided)
+    # Check 4 — Target validation (branches on task type)
     # ─────────────────────────────────────────────────────────────────────────
-    if allowed_classes is not None:
-        actual_classes  = set(df[target_column].dropna().unique())
-        allowed_set     = set(allowed_classes)
-        unexpected      = actual_classes - allowed_set
+    target_series = df[target_column].dropna()
 
-        if unexpected:
+    if target_type=="classification":
+        allowed_classes = target_config.get("allowed_classes")
+
+        if allowed_classes is not None:
+            actual_classes = set(target_series.unique())
+            allowed_set    = set(allowed_classes)
+            unexpected     = actual_classes - allowed_set
+
+            if unexpected:
+                raise ValueError(
+                    f"[validate] FAILED: Target '{target_column}' contains unexpected "
+                    f"class value(s): {unexpected}.\n"
+                    f"  Allowed classes : {allowed_set}\n"
+                    f"  Found classes   : {actual_classes}\n"
+                    f"  → Ensure clean_data.py encodes '{target_column}' correctly "
+                    f"(e.g. Yes/No → 1/0) before validation."
+                )
+            print(
+                f"[validate] PASSED  — Target classes {actual_classes} ⊆ allowed {allowed_set}"
+            )  # TODO: replace with logging later
+
+        else:
+            # No allowed_classes provided — just report what's found
+            print(
+                f"[validate] INFO   — No allowed_classes specified for classification target. "
+                f"Found classes: {set(target_series.unique())}"
+            )  # TODO: replace with logging later
+
+    elif target_type == "regression":
+
+        # 4a — Target must be numeric for regression
+        if not pd.api.types.is_numeric_dtype(df[target_column]):
             raise ValueError(
-                f"[validate] FAILED: Target column '{target_column}' contains unexpected "
-                f"class value(s): {unexpected}.\n"
-                f"  Allowed classes : {allowed_set}\n"
-                f"  Found classes   : {actual_classes}\n"
-                f"  → Ensure clean_data.py encodes '{target_column}' correctly "
-                f"(e.g. Yes/No → 1/0) before validation."
+                f"[validate] FAILED: Regression target '{target_column}' must be numeric, "
+                f"got dtype='{df[target_column].dtype}'.\n"
+                f"  → Check encoding in clean_data.py."
             )
         print(
-            f"[validate] PASSED  — Target classes {actual_classes} ⊆ allowed {allowed_set}"
+            f"[validate] PASSED  — Regression target '{target_column}' is numeric"
         )  # TODO: replace with logging later
+
+        # 4b — Optional range check
+        target_range = target_config.get("range")
+
+        if target_range is not None:
+            lo, hi       = target_range
+            out_of_range = target_series[(target_series < lo) | (target_series > hi)]
+
+            if not out_of_range.empty:
+                raise ValueError(
+                    f"[validate] FAILED: Regression target '{target_column}' has "
+                    f"{len(out_of_range)} value(s) outside expected range [{lo}, {hi}].\n"
+                    f"  Min found : {target_series.min():.4g}\n"
+                    f"  Max found : {target_series.max():.4g}\n"
+                    f"  → Inspect and clip/drop outliers in clean_data.py."
+                )
+            print(
+                f"[validate] PASSED  — Regression target within range "
+                f"[{lo}, {hi}]  (min={target_series.min():.4g}, max={target_series.max():.4g})"
+            )  # TODO: replace with logging later
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 5 — No fully-NaN rows
