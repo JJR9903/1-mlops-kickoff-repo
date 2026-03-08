@@ -79,3 +79,28 @@ def test_no_columns_provided():
     preprocessor = get_feature_preprocessor()
 
     assert isinstance(preprocessor, ColumnTransformer)
+    
+
+def test_imputation_works():
+    from src.features import get_feature_preprocessor
+
+    df = pd.DataFrame({
+        "tenure": [1, 5, np.nan],
+        "MonthlyCharges": [70.5, np.nan, 99.9],
+        "Contract": ["Month-to-month", "Two year", None],
+    })
+
+    numeric_cols = ["tenure", "MonthlyCharges"]
+    categorical_cols = ["Contract"]
+
+    preprocessor = get_feature_preprocessor(
+        quantile_bin_cols=["tenure"],
+        categorical_onehot_cols=categorical_cols,
+        numeric_passthrough_cols=numeric_cols,
+    )
+
+    # Should fit without error
+    transformed = preprocessor.fit_transform(df)
+
+    # Ensure no NaN remains after transformation
+    assert not np.isnan(transformed).any()
