@@ -1,21 +1,41 @@
 """
 Educational Goal:
-- Why this module exists in an MLOps system: Centralizes feature engineering logic to prevent data leakage and ensure consistent preprocessing between training and inference.
-- Responsibility (separation of concerns): Define feature transformation recipe only (no fitting, no data mutation).
-- Pipeline contract (inputs and outputs): Configuration lists in → ColumnTransformer recipe out.
-
-TODO: Replace print statements with standard library logging in a later session
-TODO: Any temporary or hardcoded variable or parameter will be imported from config.yml in a later session
+- Centralizes feature engineering logic to prevent data leakage
+- Ensures consistent preprocessing between training and inference
+- Returns an unfitted ColumnTransformer blueprint only
 """
 
 from typing import Optional, List
+import logging
+import pandas as pd
+import numpy as np
+
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-import numpy as np
 
 
+# --------------------------------------------------------
+# Logging configuration
+# --------------------------------------------------------
+logger = logging.getLogger(__name__)
+
+
+# --------------------------------------------------------
+# Safe numeric casting
+# --------------------------------------------------------
+def safe_numeric_cast(X):
+    """
+    Safely convert numeric-like columns to numeric.
+    Coerces invalid values (e.g. blanks) to NaN.
+    """
+    return X.apply(lambda col: pd.to_numeric(col, errors="coerce"))
+
+
+# --------------------------------------------------------
+# Feature Preprocessor Builder
+# --------------------------------------------------------
 def get_feature_preprocessor(
     quantile_bin_cols: Optional[List[str]] = None,
     categorical_onehot_cols: Optional[List[str]] = None,
@@ -26,14 +46,12 @@ def get_feature_preprocessor(
     - quantile_bin_cols: numeric columns to apply domain-based transformations
     - categorical_onehot_cols: categorical columns for one-hot encoding
     - numeric_passthrough_cols: numeric columns to pass through (with imputation)
+
     Outputs:
-    - ColumnTransformer (unfitted)
-    Why this contract matters for reliable ML delivery:
-    - Guarantees consistent preprocessing during training and inference.
-    - Prevents leakage by returning a blueprint only.
+    - Unfitted ColumnTransformer
     """
 
-    print("Building feature preprocessing recipe...")
+    logger.info("Building feature preprocessing recipe...")
 
     quantile_bin_cols = quantile_bin_cols or []
     categorical_onehot_cols = categorical_onehot_cols or []
@@ -42,10 +60,11 @@ def get_feature_preprocessor(
     transformers = []
 
     # --------------------------------------------------------
-    # 1. Numeric Pipeline (Mean Imputation)
+    # 1 Numeric Pipeline (Safe Casting + Mean Imputation)
     # --------------------------------------------------------
     if numeric_passthrough_cols:
         numeric_pipeline = Pipeline(steps=[
+            ("cast_numeric", FunctionTransformer(safe_numeric_cast, validate=False)),
             ("imputer", SimpleImputer(strategy="mean"))
         ])
 
@@ -58,7 +77,7 @@ def get_feature_preprocessor(
         )
 
     # --------------------------------------------------------
-    # 2. Domain-Based Tenure Risk Bucket
+    # 2 Domain-Based Tenure Risk Bucket
     # --------------------------------------------------------
     def tenure_bucket(X):
         tenure = X.iloc[:, 0]
@@ -77,7 +96,7 @@ def get_feature_preprocessor(
         )
 
     # --------------------------------------------------------
-    # 3. Categorical Pipeline (Imputation + OneHot)
+    # 3 Categorical Pipeline (Imputation + OneHot)
     # --------------------------------------------------------
     if categorical_onehot_cols:
 
@@ -100,7 +119,7 @@ def get_feature_preprocessor(
         )
 
     # --------------------------------------------------------
-    # 4. Telco-Specific Engineered Feature
+    # 4 Telco-Specific Engineered Feature
     # --------------------------------------------------------
     telco_service_columns = [
         "OnlineSecurity",
