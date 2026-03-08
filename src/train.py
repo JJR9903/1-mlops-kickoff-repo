@@ -12,6 +12,57 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold, KFold
 from xgboost import XGBClassifier, XGBRegressor
 
 
+def _validate_and_fill_param_grid(
+    param_grid: dict,
+    estimator,                      # XGBClassifier or XGBRegressor instance
+    default_grid: dict,
+) -> dict:
+    """
+    1. Checks all keys in param_grid use the "model__" prefix and map to
+       a real hyperparameter of the given estimator.
+    2. For any key present in the default grid but missing from the caller's
+       param_grid, fills it in with the default values and warns the user.
+
+    Raises ValueError on unrecognized keys.
+    Returns the validated + filled param_grid.
+    """
+    # Build the set of valid param names from the actual estimator
+    valid_params = set(estimator.get_params().keys())   # e.g. {"max_depth", "n_estimators", ...}
+
+    # ---- 1. Check for unrecognized keys --------------------------------
+    unrecognized = []
+    for key in param_grid:
+        if not key.startswith("model__"):
+            unrecognized.append((key, "missing 'model__' prefix"))
+            continue
+        bare = key.replace("model__", "", 1)
+        if bare not in valid_params:
+            unrecognized.append((key, f"'{bare}' is not a valid hyperparameter"))
+
+    if unrecognized:
+        details = "\n  ".join(f"{k} → {reason}" for k, reason in unrecognized)
+        raise ValueError(
+            f"[train] Invalid param_grid keys:\n  {details}\n"
+            f"Valid hyperparameter names: {sorted(valid_params)}"
+        )
+
+    # ---- 2. Fill missing keys from default grid ------------------------
+    filled_grid = dict(param_grid)  # copy — don't mutate caller's dict
+    missing_keys = [k for k in default_grid if k not in filled_grid]
+
+    if missing_keys:
+        for key in missing_keys:
+            filled_grid[key] = default_grid[key]
+            print(
+                f"[train] WARNING: '{key}' not in param_grid — "
+                f"using default values: {default_grid[key]}"
+            )
+
+    return filled_grid
+
+
+
+
 def train_model(
     X_train: pd.DataFrame,
     y_train: pd.Series,
@@ -37,20 +88,7 @@ def train_model(
     print(f"[train] Starting model training | problem_type='{problem_type}'")
 
     # ------------------------------------------------------------------ #
-    # 1. Default param grid (used only if caller does not provide one)
-    # ------------------------------------------------------------------ #
-    default_param_grid = {
-        "model__max_depth":        [3, 4, 5, 6],
-        "model__learning_rate":    [0.01, 0.05, 0.1, 0.15],
-        "model__n_estimators":     [100, 200, 300],
-        "model__subsample":        [0.7, 0.8, 0.9, 1.0],
-        "model__colsample_bytree": [0.7, 0.8, 0.9, 1.0],
-        "model__gamma":            [0, 0.1, 0.2],
-    }
-    param_grid = param_grid or default_param_grid
-
-    # ------------------------------------------------------------------ #
-    # 2. Build pipeline + set CV strategy and scoring by problem type
+    # 1. Build pipeline + set CV strategy and scoring by problem type
     # ------------------------------------------------------------------ #
     if problem_type == "classification":
         estimator = XGBClassifier(
@@ -72,13 +110,34 @@ def train_model(
     else:
         raise ValueError(f"[train] Unknown problem_type='{problem_type}'. Use 'classification' or 'regression'.")
 
+    # ------------------------------------------------------------------ #
+    # 2. Validate + fill param_grid
+    # ------------------------------------------------------------------ #
+    default_param_grid = {
+        "model__max_depth":        [3, 4, 5, 6],
+        "model__learning_rate":    [0.01, 0.05, 0.1, 0.15],
+        "model__n_estimators":     [100, 200, 300],
+        "model__subsample":        [0.7, 0.8, 0.9, 1.0],
+        "model__colsample_bytree": [0.7, 0.8, 0.9, 1.0],
+        "model__gamma":            [0, 0.1, 0.2],
+    }
+    
+    param_grid = _validate_and_fill_param_grid(
+        param_grid   = param_grid or {},
+        estimator    = estimator,
+        default_grid = default_param_grid,
+    )
+    
+    # ------------------------------------------------------------------ #
+    # 3. Build pipeline and run grid search
+    # ------------------------------------------------------------------ #
     pipeline = Pipeline(steps=[
         ("preprocess", preprocessor),
         ("model",      estimator),
     ])
 
     # ------------------------------------------------------------------ #
-    # 3. Grid search — refit=True (default) refits on full X_train
+    # 4. Grid search — refit=True (default) refits on full X_train
     # ------------------------------------------------------------------ #
     grid_search = GridSearchCV(
         estimator=pipeline,
