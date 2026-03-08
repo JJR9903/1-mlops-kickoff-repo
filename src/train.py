@@ -27,7 +27,7 @@ def _validate_and_fill_param_grid(
     Returns the validated + filled param_grid.
     """
     # Build the set of valid param names from the actual estimator
-    valid_params = set(estimator.get_params().keys())   # e.g. {"max_depth", "n_estimators", ...}
+    valid_params = set(estimator.get_params().keys())  # e.g.{"max_depth", ...}
 
     # ---- 1. Check for unrecognized keys --------------------------------
     unrecognized = []
@@ -61,8 +61,6 @@ def _validate_and_fill_param_grid(
     return filled_grid
 
 
-
-
 def train_model(
     X_train: pd.DataFrame,
     y_train: pd.Series,
@@ -92,7 +90,6 @@ def train_model(
     # ------------------------------------------------------------------ #
     if problem_type == "classification":
         estimator = XGBClassifier(
-            use_label_encoder=False,
             eval_metric="logloss",
             random_state=42,
         )
@@ -114,12 +111,12 @@ def train_model(
     # 2. Validate + fill param_grid
     # ------------------------------------------------------------------ #
     default_param_grid = {
-        "model__max_depth":        [3, 4, 5, 6],
-        "model__learning_rate":    [0.01, 0.05, 0.1, 0.15],
-        "model__n_estimators":     [100, 200, 300],
-        "model__subsample":        [0.7, 0.8, 0.9, 1.0],
-        "model__colsample_bytree": [0.7, 0.8, 0.9, 1.0],
-        "model__gamma":            [0, 0.1, 0.2],
+        "model__max_depth":        [3, 6],
+        "model__learning_rate":    [0.01, 0.15],
+        "model__n_estimators":     [100, 300],
+        "model__subsample":        [0.7, 0.9],
+        "model__colsample_bytree": [0.7, 0.9],
+        "model__gamma":            [0, 0.1],
     }
     
     param_grid = _validate_and_fill_param_grid(
