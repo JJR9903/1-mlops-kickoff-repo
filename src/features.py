@@ -10,7 +10,9 @@ TODO: Any temporary or hardcoded variable or parameter will be imported from con
 
 from typing import Optional, List
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder, FunctionTransformer
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 import numpy as np
 
 
@@ -18,14 +20,12 @@ def get_feature_preprocessor(
     quantile_bin_cols: Optional[List[str]] = None,
     categorical_onehot_cols: Optional[List[str]] = None,
     numeric_passthrough_cols: Optional[List[str]] = None,
-    n_bins: int = 3
 ):
     """
     Inputs:
-    - quantile_bin_cols: numeric columns to apply quantile binning
+    - quantile_bin_cols: numeric columns to apply domain-based transformations
     - categorical_onehot_cols: categorical columns for one-hot encoding
-    - numeric_passthrough_cols: numeric columns to pass through unchanged
-    - n_bins: number of quantile bins
+    - numeric_passthrough_cols: numeric columns to pass through (with imputation)
     Outputs:
     - ColumnTransformer (unfitted)
     Why this contract matters for reliable ML delivery:
@@ -33,7 +33,7 @@ def get_feature_preprocessor(
     - Prevents leakage by returning a blueprint only.
     """
 
-    print("Building feature preprocessing recipe...")  # TODO: replace with logging later
+    print("Building feature preprocessing recipe...")
 
     quantile_bin_cols = quantile_bin_cols or []
     categorical_onehot_cols = categorical_onehot_cols or []
@@ -42,13 +42,29 @@ def get_feature_preprocessor(
     transformers = []
 
     # --------------------------------------------------------
-    # Business Tenure Risk Bucket (Domain-Based Feature)
+    # 1. Numeric Pipeline (Mean Imputation)
+    # --------------------------------------------------------
+    if numeric_passthrough_cols:
+        numeric_pipeline = Pipeline(steps=[
+            ("imputer", SimpleImputer(strategy="mean"))
+        ])
+
+        transformers.append(
+            (
+                "numeric",
+                numeric_pipeline,
+                numeric_passthrough_cols,
+            )
+        )
+
+    # --------------------------------------------------------
+    # 2. Domain-Based Tenure Risk Bucket
     # --------------------------------------------------------
     def tenure_bucket(X):
         tenure = X.iloc[:, 0]
         return np.where(
-            tenure < 6, 2,              # high churn risk
-            np.where(tenure < 12, 1, 0) # medium / low risk
+            tenure < 6, 2,
+            np.where(tenure < 12, 1, 0)
         ).reshape(-1, 1)
 
     if "tenure" in quantile_bin_cols:
@@ -61,44 +77,31 @@ def get_feature_preprocessor(
         )
 
     # --------------------------------------------------------
-    # One-Hot Encoding (Categorical Variables)
+    # 3. Categorical Pipeline (Imputation + OneHot)
     # --------------------------------------------------------
     if categorical_onehot_cols:
+
         try:
             encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
         except TypeError:
             encoder = OneHotEncoder(handle_unknown="ignore", sparse=False)
 
+        categorical_pipeline = Pipeline(steps=[
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            ("onehot", encoder)
+        ])
+
         transformers.append(
             (
-                "categorical_onehot",
-                encoder,
+                "categorical",
+                categorical_pipeline,
                 categorical_onehot_cols,
             )
         )
 
     # --------------------------------------------------------
-    # Numeric Passthrough
+    # 4. Telco-Specific Engineered Feature
     # --------------------------------------------------------
-    if numeric_passthrough_cols:
-        transformers.append(
-            (
-                "numeric_passthrough",
-                "passthrough",
-                numeric_passthrough_cols,
-            )
-        )
-
-    # --------------------------------------------------------
-    # START STUDENT CODE
-    # --------------------------------------------------------
-    # TODO_STUDENT: Add Telco-specific engineered features safely
-    # Why: Feature engineering depends on dataset and business context.
-    # Examples:
-    # 1. Add revenue-per-tenure ratio
-    # 2. Add contract-tenure interaction
-    # 3. Add churn risk composite features
-
     telco_service_columns = [
         "OnlineSecurity",
         "OnlineBackup",
@@ -109,6 +112,7 @@ def get_feature_preprocessor(
     ]
 
     if all(col in categorical_onehot_cols for col in telco_service_columns):
+
         def service_count(X):
             return X.apply(lambda row: (row == "Yes").sum(), axis=1).values.reshape(-1, 1)
 
@@ -120,12 +124,9 @@ def get_feature_preprocessor(
             )
         )
 
-    print("Warning: Student has not implemented additional custom feature logic")
     # --------------------------------------------------------
-    # END STUDENT CODE
+    # Final ColumnTransformer
     # --------------------------------------------------------
-
-    # Build ColumnTransformer only once, after all transformers are defined
     preprocessor = ColumnTransformer(
         transformers=transformers,
         remainder="drop"
