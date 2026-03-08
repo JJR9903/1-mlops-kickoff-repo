@@ -11,6 +11,7 @@ dependencies:
   - joblib
   - jupyter
   - ipykernel
+  - openpyxl
   - pyyaml
   - pytest
   - pip
