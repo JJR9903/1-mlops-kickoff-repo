@@ -62,6 +62,16 @@ def clean_dataframe(df_raw: pd.DataFrame, target_column: str) -> pd.DataFrame:
             median_val = df_clean[col].median()
             df_clean[col] = df_clean[col].fillna(median_val)
 
+    # 3.b Fill missing categorical values with Mode (avoiding dropping rows with nulls)
+    # Generalized to all object/string columns
+    for col in df_clean.select_dtypes(include=['object', 'string', 'category']).columns:
+        if col != target_column and df_clean[col].isna().any():
+            mode_s = df_clean[col].mode()
+            if not mode_s.empty:
+                df_clean[col] = df_clean[col].fillna(mode_s.iloc[0])
+            else:
+                df_clean[col] = df_clean[col].fillna("Missing")
+
     # 4. Drop ID-like columns
     # Identifying ID-like columns: high cardinality categorical columns.
     # E.g., if >90% of values are unique, it's likely an identifier (like customerID).

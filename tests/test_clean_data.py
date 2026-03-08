@@ -32,7 +32,8 @@ def test_clean_dataframe_generalized_string_blanks():
     
     df_clean = clean_dataframe(df_raw, target_column="target")
     
-    expected_col1 = pd.Series(["a", np.nan, np.nan, "a", np.nan], name="col1")
+    # Since 'a' is the mode, the np.nan values created in step 1 will be filled with 'a' in step 3.b
+    expected_col1 = pd.Series(["a", "a", "a", "a", "a"], name="col1")
     # the dtype might remain object for mixed strings, so we don't strictly assert dtype unless needed
     pd.testing.assert_series_equal(df_clean["col1"], expected_col1)
 
