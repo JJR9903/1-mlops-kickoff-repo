@@ -96,7 +96,24 @@ def validate_dataframe(
     )  # TODO: replace with logging later
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Check 2 — Schema: presence, dtype kind, and NaN policy per column
+    # Check 2 — No fully-NaN rows
+    # ─────────────────────────────────────────────────────────────────────────
+    fully_nan_mask = df.isna().all(axis=1)
+    n_fully_nan = int(fully_nan_mask.sum())
+
+    if n_fully_nan > 0:
+        raise ValueError(
+            f"[validate] FAILED: {n_fully_nan} row(s) have NaN in every column.\n"
+            f"  First offending indices: {list(df.index[fully_nan_mask][:5])}\n"
+            f"  → These rows carry no information. Drop them in clean_data.py:\n"
+            f"    df.dropna(how='all', inplace=True)"
+        )
+    print(
+        f"[validate] PASSED  — No fully-NaN rows found"
+    )  # TODO: replace with logging later
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Check 3 — Schema: presence, dtype kind, and NaN policy per column
     # ─────────────────────────────────────────────────────────────────────────
     schema_errors = []
 
@@ -158,7 +175,7 @@ def validate_dataframe(
     )  # TODO: replace with logging later
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Check 3 — Target column present
+    # Check 4 — Target column present
     # ─────────────────────────────────────────────────────────────────────────
     if target_column not in df.columns:
         raise ValueError(
@@ -172,7 +189,7 @@ def validate_dataframe(
     )  # TODO: replace with logging later
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Check 4 — Target validation (branches on task type)
+    # Check 5 — Target validation (branches on task type)
     # ─────────────────────────────────────────────────────────────────────────
     target_series = df[target_column].dropna()
 
@@ -239,22 +256,6 @@ def validate_dataframe(
                 f"[{lo}, {hi}]  (min={target_series.min():.4g}, max={target_series.max():.4g})"
             )  # TODO: replace with logging later
 
-    # ─────────────────────────────────────────────────────────────────────────
-    # Check 5 — No fully-NaN rows
-    # ─────────────────────────────────────────────────────────────────────────
-    fully_nan_mask = df.isna().all(axis=1)
-    n_fully_nan = int(fully_nan_mask.sum())
-
-    if n_fully_nan > 0:
-        raise ValueError(
-            f"[validate] FAILED: {n_fully_nan} row(s) have NaN in every column.\n"
-            f"  First offending indices: {list(df.index[fully_nan_mask][:5])}\n"
-            f"  → These rows carry no information. Drop them in clean_data.py:\n"
-            f"    df.dropna(how='all', inplace=True)"
-        )
-    print(
-        f"[validate] PASSED  — No fully-NaN rows found"
-    )  # TODO: replace with logging later
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 6 — No negative values in any numeric column
