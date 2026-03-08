@@ -1,5 +1,4 @@
-from typing import Dict, List, Optional
-
+from typing import Dict
 import pandas as pd
 
 # ── Supported dtype-kind labels and their pandas checks ──────────────────────
@@ -67,12 +66,11 @@ def validate_dataframe(
     """
     print("[validate] Running data quality checks...")  # TODO: replace with logging later
 
-
     # ─────────────────────────────────────────────────────────────────────────
     # Validate target_config structure up front
     # ─────────────────────────────────────────────────────────────────────────
     target_column = target_config.get("column")
-    target_type   = target_config.get("type")
+    target_type = target_config.get("type")
 
     if not target_column:
         raise ValueError(
@@ -105,7 +103,7 @@ def validate_dataframe(
     for col, meta in schema.items():
 
         expected_kind = meta.get("type")
-        accept_nan    = meta.get("accept_nan", False)
+        accept_nan = meta.get("accept_nan", False)
 
         # 2a — Column must exist
         if col not in df.columns:
@@ -150,7 +148,7 @@ def validate_dataframe(
         raise ValueError(
             "[validate] FAILED — Schema errors detected:\n"
             + "\n".join(schema_errors)
-            + f"\n\n  Available columns + dtypes:\n"
+            + "\n\n  Available columns + dtypes:\n"
             + "\n".join(f"    {c}: {df[c].dtype}" for c in df.columns)
         )
 
@@ -178,13 +176,13 @@ def validate_dataframe(
     # ─────────────────────────────────────────────────────────────────────────
     target_series = df[target_column].dropna()
 
-    if target_type=="classification":
+    if target_type == "classification":
         allowed_classes = target_config.get("allowed_classes")
 
         if allowed_classes is not None:
             actual_classes = set(target_series.unique())
-            allowed_set    = set(allowed_classes)
-            unexpected     = actual_classes - allowed_set
+            allowed_set = set(allowed_classes)
+            unexpected = actual_classes - allowed_set
 
             if unexpected:
                 raise ValueError(
@@ -223,8 +221,10 @@ def validate_dataframe(
         target_range = target_config.get("range")
 
         if target_range is not None:
-            lo, hi       = target_range
-            out_of_range = target_series[(target_series < lo) | (target_series > hi)]
+            lo, hi = target_range
+            out_of_range = target_series[
+                (target_series < lo) | (target_series > hi)
+                ]
 
             if not out_of_range.empty:
                 raise ValueError(
@@ -243,7 +243,7 @@ def validate_dataframe(
     # Check 5 — No fully-NaN rows
     # ─────────────────────────────────────────────────────────────────────────
     fully_nan_mask = df.isna().all(axis=1)
-    n_fully_nan    = int(fully_nan_mask.sum())
+    n_fully_nan = int(fully_nan_mask.sum())
 
     if n_fully_nan > 0:
         raise ValueError(
@@ -259,11 +259,12 @@ def validate_dataframe(
     # ─────────────────────────────────────────────────────────────────────────
     # Check 6 — No negative values in any numeric column
     # ─────────────────────────────────────────────────────────────────────────
-    numeric_cols  = df.select_dtypes(include="number").columns.tolist()
+    numeric_cols = df.select_dtypes(include="number").columns.tolist()
     negative_cols = [col for col in numeric_cols if (df[col] < 0).any()]
 
     if negative_cols:
-        details = [f"    '{col}':  min={df[col].min():.4g}" for col in negative_cols]
+        details = [f"    '{col}':  min={df[col].min():.4g}"
+                   for col in negative_cols]
         raise ValueError(
             f"[validate] FAILED: Negative values found in {len(negative_cols)} numeric column(s):\n"
             + "\n".join(details)

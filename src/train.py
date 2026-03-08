@@ -1,7 +1,8 @@
 """
 Module: Model Training
 ----------------------
-Role: Bundle preprocessing and algorithms into a single Pipeline and fit on training data.
+Role: Bundle preprocessing and algorithms into a single Pipeline and fit
+    on training data.
 Input: pandas.DataFrame (Processed) + ColumnTransformer (Recipe).
 Output: Serialized scikit-learn Pipeline in `models/`.
 """
@@ -9,6 +10,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, KFold
 from xgboost import XGBClassifier, XGBRegressor
+
 
 def train_model(
     X_train: pd.DataFrame,
@@ -28,7 +30,8 @@ def train_model(
                     If None, a sensible default grid is used.
 
     Outputs:
-    - Fitted sklearn Pipeline [("preprocess", preprocessor), ("model", estimator)]
+    - Fitted sklearn Pipeline [("preprocess", preprocessor), 
+        ("model", estimator)]
       Already refitted on the full X_train with best hyperparameters found.
     """
     print(f"[train] Starting model training | problem_type='{problem_type}'")
@@ -55,16 +58,16 @@ def train_model(
             eval_metric="logloss",
             random_state=42,
         )
-        cv       = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-        scoring  = "f1"
+        cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        scoring = "f1"
 
     elif problem_type == "regression":
         estimator = XGBRegressor(
             eval_metric="rmse",
             random_state=42,
         )
-        cv       = KFold(n_splits=5, shuffle=True, random_state=42)
-        scoring  = "neg_root_mean_squared_error"
+        cv = KFold(n_splits=5, shuffle=True, random_state=42)
+        scoring = "neg_root_mean_squared_error"
 
     else:
         raise ValueError(f"[train] Unknown problem_type='{problem_type}'. Use 'classification' or 'regression'.")
@@ -75,16 +78,16 @@ def train_model(
     ])
 
     # ------------------------------------------------------------------ #
-    # 3. Grid search — refit=True (default) refits on full X_train automatically
+    # 3. Grid search — refit=True (default) refits on full X_train
     # ------------------------------------------------------------------ #
     grid_search = GridSearchCV(
-        estimator  = pipeline,
-        param_grid = param_grid,
-        scoring    = scoring,
-        cv         = cv,
-        n_jobs     = -1,
-        verbose    = 1,
-        refit      = True,   # explicit — best_estimator_ is already the final model
+        estimator=pipeline,
+        param_grid=param_grid,
+        scoring=scoring,
+        cv=cv,
+        n_jobs=-1,
+        verbose=1,
+        refit=True,   # explicit — best_estimator_ is already the final model
     )
     grid_search.fit(X_train, y_train)
 
@@ -101,5 +104,5 @@ def train_model(
     print(f"[train] Best Parameters: {grid_search.best_params_}")
     print(f"[train] Best CV {metric_label}: {best_score:.4f}")
 
-    # grid_search.best_estimator_ is the pipeline already refitted on full X_train
+    # grid_search.best_estimator_ is the refitted on X_train
     return grid_search.best_estimator_
