@@ -15,6 +15,9 @@ from sklearn.compose import ColumnTransformer
 
 from src.features import get_feature_preprocessor
 
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+
 
 def test_returns_column_transformer():
     """
@@ -79,3 +82,20 @@ def test_no_columns_provided():
     preprocessor = get_feature_preprocessor()
 
     assert isinstance(preprocessor, ColumnTransformer)
+    
+numeric_pipeline = Pipeline(steps=[
+    ("imputer", SimpleImputer(strategy="mean"))
+])
+
+categorical_pipeline = Pipeline(steps=[
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("onehot", OneHotEncoder(handle_unknown="ignore"))
+])
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", numeric_pipeline, numeric_columns),
+        ("cat", categorical_pipeline, categorical_columns),
+        # keep any other existing transformers
+    ]
+)
