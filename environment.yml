@@ -6,6 +6,11 @@ dependencies:
   - python=3.10
   - pandas
   - scikit-learn
+  - xgboost
+  - openpyxl
+  - joblib
+  - jupyter
+  - ipykernel
   - openpyxl
   - pyyaml
   - pytest
