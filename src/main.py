@@ -17,9 +17,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.clean_data import clean_dataframe
-#from src.evaluate import evaluate_model
+from src.evaluate import evaluate_model
 from src.features import get_feature_preprocessor
-#from src.infer import run_inference
+from src.infer import run_inference
 from src.load_data import load_raw_data
 from src.train import train_model
 from src.utils import get_logger, save_csv, save_model
@@ -279,7 +279,7 @@ def main() -> None:
         model_path = Path(SETTINGS["model_path"])
         logger.info("Saving model artifact to: %s", model_path)
         save_model(model, model_path)
-        """ 
+        
         # Step 10) Evaluate on VAL (test stays vaulted)
         logger.info("Evaluating on VAL split")
         metric_value = evaluate_model(
@@ -289,7 +289,7 @@ def main() -> None:
             problem_type=SETTINGS["problem_type"],
         )
         logger.info("Validation metric = %s", metric_value)
-
+        
         # Step 11) Inference on TEST sample (demo output)
         logger.info("Running inference on TEST sample and saving predictions")
         X_infer = X_test.head(20)
@@ -297,7 +297,7 @@ def main() -> None:
         save_csv(df_pred, Path(SETTINGS["predictions_path"]))
 
         logger.info("Pipeline complete ✅")
-        """
+        
     except Exception as exc:
         logger.exception("Pipeline failed: %s", exc)
         # Make failures obvious in CI
