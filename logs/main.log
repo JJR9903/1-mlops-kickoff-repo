@@ -482,3 +482,68 @@ _pickle.PicklingError: Can't pickle <function get_feature_preprocessor.<locals>.
 2026-03-09 10:47:02 | INFO | main | Building feature preprocessor (unfitted)
 2026-03-09 10:47:02 | INFO | main | Training model (fit only on TRAIN split)
 2026-03-09 10:47:21 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 11:07:23 | INFO | main | Starting pipeline
+2026-03-09 11:07:23 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 11:07:23 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 11:07:23 | INFO | main | Ensured directory exists: models
+2026-03-09 11:07:23 | INFO | main | Ensured directory exists: reports
+2026-03-09 11:07:23 | INFO | main | Ensured directory exists: logs
+2026-03-09 11:07:23 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 11:07:23 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 11:07:23 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 11:07:23 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 11:07:23 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 11:07:23 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 11:07:24 | INFO | main | Validating required columns: ['tenure', 'PaperlessBilling', 'MultipleLines', 'Partner', 'SeniorCitizen', 'OnlineSecurity', 'TotalCharges', 'PaymentMethod', 'StreamingMovies', 'Churn', 'OnlineBackup', 'PhoneService', 'InternetService', 'StreamingTV', 'MonthlyCharges', 'gender', 'TechSupport', 'Contract', 'DeviceProtection', 'Dependents']
+2026-03-09 11:07:24 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 11:07:24 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 11:07:24 | INFO | main | Running fail-fast feature checks
+2026-03-09 11:07:24 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 11:07:24 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 11:07:43 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 11:07:43 | INFO | main | Evaluating on VAL split
+2026-03-09 11:07:43 | INFO | main | Validation metric = 0.5921787709497207
+2026-03-09 11:08:57 | INFO | main | Starting pipeline
+2026-03-09 11:08:57 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 11:08:57 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 11:08:57 | INFO | main | Ensured directory exists: models
+2026-03-09 11:08:57 | INFO | main | Ensured directory exists: reports
+2026-03-09 11:08:57 | INFO | main | Ensured directory exists: logs
+2026-03-09 11:08:57 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 11:08:57 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 11:08:57 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 11:08:57 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 11:08:57 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 11:08:57 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 11:08:57 | INFO | main | Validating required columns: ['gender', 'SeniorCitizen', 'StreamingMovies', 'InternetService', 'StreamingTV', 'OnlineSecurity', 'TechSupport', 'PaperlessBilling', 'DeviceProtection', 'Churn', 'tenure', 'MonthlyCharges', 'Contract', 'TotalCharges', 'Partner', 'Dependents', 'PaymentMethod', 'PhoneService', 'OnlineBackup', 'MultipleLines']
+2026-03-09 11:08:57 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 11:08:57 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 11:08:57 | INFO | main | Running fail-fast feature checks
+2026-03-09 11:08:57 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 11:08:57 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 11:09:15 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 11:09:15 | INFO | main | Evaluating on VAL split
+2026-03-09 11:09:15 | INFO | main | Validation metric = 0.5921787709497207
+2026-03-09 11:10:17 | INFO | main | Starting pipeline
+2026-03-09 11:10:17 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 11:10:17 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 11:10:17 | INFO | main | Ensured directory exists: models
+2026-03-09 11:10:17 | INFO | main | Ensured directory exists: reports
+2026-03-09 11:10:17 | INFO | main | Ensured directory exists: logs
+2026-03-09 11:10:17 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 11:10:17 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 11:10:17 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 11:10:17 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 11:10:17 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 11:10:17 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 11:10:17 | INFO | main | Validating required columns: ['StreamingTV', 'PaymentMethod', 'Partner', 'MonthlyCharges', 'Contract', 'Churn', 'OnlineSecurity', 'SeniorCitizen', 'gender', 'PhoneService', 'DeviceProtection', 'TechSupport', 'Dependents', 'tenure', 'OnlineBackup', 'PaperlessBilling', 'MultipleLines', 'TotalCharges', 'InternetService', 'StreamingMovies']
+2026-03-09 11:10:17 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 11:10:17 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 11:10:17 | INFO | main | Running fail-fast feature checks
+2026-03-09 11:10:17 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 11:10:17 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 11:10:37 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 11:10:37 | INFO | main | Evaluating on VAL split
+2026-03-09 11:10:37 | INFO | main | Validation metric = 0.5921787709497207
+2026-03-09 11:10:37 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-09 11:10:37 | INFO | main | Pipeline complete ✅
