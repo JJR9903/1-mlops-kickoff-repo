@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import pickle
+import joblib
 from pathlib import Path
 from typing import Any
 
@@ -75,9 +76,7 @@ def save_model(model: Any, filepath: Path) -> None:
     (joblib is also acceptable; pickle meets the artifact requirement.)
     """
     filepath.parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, "wb") as f:
-        pickle.dump(model, f)
-
+    joblib.dump(model, filepath)
 
 def load_model(filepath: Path) -> Any:
     """
