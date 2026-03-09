@@ -34,6 +34,32 @@ def safe_numeric_cast(X):
 
 
 # --------------------------------------------------------
+# Module-level transform functions (required for pickle compatibility)
+# Defining these inside get_feature_preprocessor() makes them local closures
+# that joblib/pickle cannot serialize — they must live at module scope.
+# --------------------------------------------------------
+def tenure_bucket(X):
+    """
+    Domain-based risk bucket for tenure:
+      < 6 months  -> 2 (high churn risk)
+      6-11 months -> 1 (medium risk)
+      12+ months  -> 0 (low risk)
+    """
+    tenure = X.iloc[:, 0]
+    return np.where(
+        tenure < 6, 2,
+        np.where(tenure < 12, 1, 0)
+    ).reshape(-1, 1)
+
+
+def service_count(X):
+    """
+    Counts how many Telco add-on services a customer has subscribed to ('Yes').
+    Produces a single engineered numeric feature.
+    """
+    return X.apply(lambda row: (row == "Yes").sum(), axis=1).values.reshape(-1, 1)
+
+# --------------------------------------------------------
 # Feature Preprocessor Builder
 # --------------------------------------------------------
 def get_feature_preprocessor(
@@ -80,13 +106,6 @@ def get_feature_preprocessor(
     # --------------------------------------------------------
     # 2 Domain-Based Tenure Risk Bucket
     # --------------------------------------------------------
-    def tenure_bucket(X):
-        tenure = X.iloc[:, 0]
-        return np.where(
-            tenure < 6, 2,
-            np.where(tenure < 12, 1, 0)
-        ).reshape(-1, 1)
-
     if "tenure" in quantile_bin_cols:
         transformers.append(
             (
@@ -132,9 +151,6 @@ def get_feature_preprocessor(
     ]
 
     if all(col in categorical_onehot_cols for col in telco_service_columns):
-
-        def service_count(X):
-            return X.apply(lambda row: (row == "Yes").sum(), axis=1).values.reshape(-1, 1)
 
         transformers.append(
             (
