@@ -1,0 +1,484 @@
+2026-03-07 11:08:50 | INFO | main | Starting pipeline
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: models
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:08:50 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:08:50 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:08:50 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-1\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:08:50 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:08:50 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:08:50 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:08:50 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-1\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:08:50 | INFO | main | Validating required columns: ['cat_feature', 'num_feature', 'target']
+2026-03-07 11:08:50 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:08:50 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:08:50 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:08:50 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:08:50 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:08:50 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-1\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:08:50 | ERROR | main | Pipeline failed: Can't get local object 'test_main_orchestrates_and_writes_artifacts.<locals>.train_model.<locals>.DummyModel'
+Traceback (most recent call last):
+  File "C:\Users\diego\Documents\VS CODE\MLOPS\1-mlops-kickoff-repo\1-mlops-kickoff-repo\src\main.py", line 251, in main
+    save_model(model, model_path)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\diego\Documents\VS CODE\MLOPS\1-mlops-kickoff-repo\1-mlops-kickoff-repo\src\utils.py", line 79, in save_model
+    pickle.dump(model, f)
+    ~~~~~~~~~~~^^^^^^^^^^
+AttributeError: Can't get local object 'test_main_orchestrates_and_writes_artifacts.<locals>.train_model.<locals>.DummyModel'
+2026-03-07 11:13:07 | INFO | main | Starting pipeline
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: models
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:13:07 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:13:07 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:13:07 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-2\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:13:07 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:13:07 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:13:07 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:13:07 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-2\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:13:07 | INFO | main | Validating required columns: ['cat_feature', 'num_feature', 'target']
+2026-03-07 11:13:07 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:13:07 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:13:07 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:13:07 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:13:07 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:13:07 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-2\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:13:07 | INFO | main | Evaluating on VAL split
+2026-03-07 11:13:07 | INFO | main | Validation metric = 0.99
+2026-03-07 11:13:07 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-07 11:13:07 | INFO | main | Pipeline complete ✅
+2026-03-07 11:13:21 | INFO | main | Starting pipeline
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: models
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:13:21 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:13:21 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:13:21 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-3\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:13:21 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:13:21 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:13:21 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:13:21 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-3\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:13:21 | INFO | main | Validating required columns: ['cat_feature', 'num_feature', 'target']
+2026-03-07 11:13:21 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:13:21 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:13:21 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:13:21 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:13:21 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:13:21 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-3\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:13:21 | INFO | main | Evaluating on VAL split
+2026-03-07 11:13:21 | INFO | main | Validation metric = 0.99
+2026-03-07 11:13:21 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-07 11:13:21 | INFO | main | Pipeline complete ✅
+2026-03-07 11:13:37 | INFO | main | Starting pipeline
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: data/raw
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: data/processed
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: models
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: reports
+2026-03-07 11:13:37 | INFO | main | Ensured directory exists: logs
+2026-03-07 11:13:37 | WARNING | main | Running EXAMPLE config (dummy dataset schema). To use real data, update SETTINGS.
+2026-03-07 11:13:37 | INFO | main | Loading raw data from: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-4\test_main_orchestrates_and_wri0\dataset.csv
+2026-03-07 11:13:37 | INFO | main | Raw shape: (8, 3)
+2026-03-07 11:13:37 | INFO | main | Cleaning data (target=target)
+2026-03-07 11:13:37 | INFO | main | Clean shape: (8, 3)
+2026-03-07 11:13:37 | INFO | main | Saving processed data to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-4\test_main_orchestrates_and_wri0\clean.csv
+2026-03-07 11:13:37 | INFO | main | Validating required columns: ['num_feature', 'cat_feature', 'target']
+2026-03-07 11:13:37 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-07 11:13:37 | INFO | main | Split sizes -> train=4, val=2, test=2
+2026-03-07 11:13:37 | INFO | main | Running fail-fast feature checks
+2026-03-07 11:13:37 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-07 11:13:37 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-07 11:13:37 | INFO | main | Saving model artifact to: C:\Users\diego\AppData\Local\Temp\pytest-of-diego\pytest-4\test_main_orchestrates_and_wri0\model.pkl
+2026-03-07 11:13:37 | INFO | main | Evaluating on VAL split
+2026-03-07 11:13:37 | INFO | main | Validation metric = 0.99
+2026-03-07 11:13:37 | INFO | main | Running inference on TEST sample and saving predictions
+2026-03-07 11:13:37 | INFO | main | Pipeline complete ✅
+2026-03-09 09:29:51 | INFO | main | Starting pipeline
+2026-03-09 09:29:51 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 09:29:51 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 09:29:51 | INFO | main | Ensured directory exists: models
+2026-03-09 09:29:51 | INFO | main | Ensured directory exists: reports
+2026-03-09 09:29:51 | INFO | main | Ensured directory exists: logs
+2026-03-09 09:29:51 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 09:29:51 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 09:29:51 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 09:32:58 | INFO | main | Starting pipeline
+2026-03-09 09:32:58 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 09:32:58 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 09:32:58 | INFO | main | Ensured directory exists: models
+2026-03-09 09:32:58 | INFO | main | Ensured directory exists: reports
+2026-03-09 09:32:58 | INFO | main | Ensured directory exists: logs
+2026-03-09 09:32:58 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 09:32:58 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 09:32:58 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 09:32:58 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 09:32:58 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 09:35:30 | INFO | main | Starting pipeline
+2026-03-09 09:35:30 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 09:35:30 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 09:35:30 | INFO | main | Ensured directory exists: models
+2026-03-09 09:35:30 | INFO | main | Ensured directory exists: reports
+2026-03-09 09:35:30 | INFO | main | Ensured directory exists: logs
+2026-03-09 09:35:30 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 09:35:30 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 09:35:30 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 09:35:30 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 09:35:30 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 09:35:30 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 09:55:32 | INFO | main | Starting pipeline
+2026-03-09 09:55:32 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 09:55:32 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 09:55:32 | INFO | main | Ensured directory exists: models
+2026-03-09 09:55:32 | INFO | main | Ensured directory exists: reports
+2026-03-09 09:55:32 | INFO | main | Ensured directory exists: logs
+2026-03-09 09:55:32 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 09:55:32 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 09:55:32 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 09:55:32 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 09:55:32 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 09:55:32 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 09:55:32 | INFO | main | Validating required columns: ['StreamingTV', 'gender', 'TechSupport', 'MonthlyCharges', 'PaperlessBilling', 'TotalCharges', 'Dependents', 'OnlineSecurity', 'Partner', 'Churn', 'OnlineBackup', 'PhoneService', 'InternetService', 'Contract', 'PaymentMethod', 'tenure', 'DeviceProtection', 'MultipleLines', 'SeniorCitizen', 'StreamingMovies']
+2026-03-09 09:59:45 | INFO | main | Starting pipeline
+2026-03-09 09:59:45 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 09:59:45 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 09:59:45 | INFO | main | Ensured directory exists: models
+2026-03-09 09:59:45 | INFO | main | Ensured directory exists: reports
+2026-03-09 09:59:45 | INFO | main | Ensured directory exists: logs
+2026-03-09 09:59:45 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 09:59:45 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 09:59:45 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 09:59:45 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 09:59:45 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 09:59:45 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 09:59:45 | INFO | main | Validating required columns: ['StreamingTV', 'OnlineBackup', 'TechSupport', 'gender', 'DeviceProtection', 'OnlineSecurity', 'SeniorCitizen', 'InternetService', 'MultipleLines', 'MonthlyCharges', 'TotalCharges', 'tenure', 'Partner', 'PaperlessBilling', 'Contract', 'PhoneService', 'Dependents', 'StreamingMovies', 'PaymentMethod', 'Churn']
+2026-03-09 09:59:45 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 09:59:45 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:01:27 | INFO | main | Starting pipeline
+2026-03-09 10:01:27 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:01:27 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:01:27 | INFO | main | Ensured directory exists: models
+2026-03-09 10:01:27 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:01:27 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:01:27 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:01:27 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:01:27 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:01:27 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:01:27 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:01:27 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:01:27 | INFO | main | Validating required columns: ['MultipleLines', 'StreamingTV', 'TotalCharges', 'InternetService', 'PaymentMethod', 'MonthlyCharges', 'Partner', 'PaperlessBilling', 'StreamingMovies', 'TechSupport', 'DeviceProtection', 'Dependents', 'gender', 'tenure', 'Contract', 'OnlineSecurity', 'Churn', 'PhoneService', 'OnlineBackup', 'SeniorCitizen']
+2026-03-09 10:01:27 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:01:27 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:01:27 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:03:42 | INFO | main | Starting pipeline
+2026-03-09 10:03:42 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:03:42 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:03:42 | INFO | main | Ensured directory exists: models
+2026-03-09 10:03:42 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:03:42 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:03:42 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:03:42 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:03:42 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:03:42 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:03:43 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:03:43 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:03:43 | INFO | main | Validating required columns: ['Contract', 'DeviceProtection', 'tenure', 'PhoneService', 'gender', 'SeniorCitizen', 'MonthlyCharges', 'TechSupport', 'PaperlessBilling', 'Partner', 'TotalCharges', 'Churn', 'MultipleLines', 'StreamingTV', 'OnlineBackup', 'InternetService', 'StreamingMovies', 'PaymentMethod', 'OnlineSecurity', 'Dependents']
+2026-03-09 10:03:43 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:03:43 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:03:43 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:03:43 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:13:47 | INFO | main | Starting pipeline
+2026-03-09 10:13:47 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:13:47 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:13:47 | INFO | main | Ensured directory exists: models
+2026-03-09 10:13:47 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:13:47 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:13:47 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:13:47 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:13:47 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:13:47 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:13:47 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:13:47 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:13:47 | INFO | main | Validating required columns: ['gender', 'TechSupport', 'PaperlessBilling', 'StreamingTV', 'StreamingMovies', 'Dependents', 'PaymentMethod', 'PhoneService', 'tenure', 'MultipleLines', 'Partner', 'DeviceProtection', 'OnlineBackup', 'InternetService', 'TotalCharges', 'Contract', 'OnlineSecurity', 'Churn', 'SeniorCitizen', 'MonthlyCharges']
+2026-03-09 10:13:47 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:13:47 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:13:47 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:13:47 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:13:47 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 10:15:53 | INFO | main | Starting pipeline
+2026-03-09 10:15:53 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:15:53 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:15:53 | INFO | main | Ensured directory exists: models
+2026-03-09 10:15:53 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:15:53 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:15:53 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:15:53 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:15:53 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:15:53 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:15:53 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:15:53 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:15:53 | INFO | main | Validating required columns: ['SeniorCitizen', 'PaymentMethod', 'DeviceProtection', 'StreamingMovies', 'StreamingTV', 'InternetService', 'tenure', 'Dependents', 'MultipleLines', 'gender', 'Contract', 'PhoneService', 'PaperlessBilling', 'OnlineBackup', 'Partner', 'TechSupport', 'TotalCharges', 'MonthlyCharges', 'OnlineSecurity', 'Churn']
+2026-03-09 10:15:53 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:15:53 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:15:53 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:15:53 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:15:53 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 10:16:13 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 10:16:13 | ERROR | main | Pipeline failed: Can't pickle local object 'get_feature_preprocessor.<locals>.tenure_bucket'
+Traceback (most recent call last):
+  File "/Users/juanjose/Library/CloudStorage/GoogleDrive-jj.rincon@student.ie.edu/My Drive/term 2/MLops/1-mlops-kickoff-repo/src/main.py", line 282, in main
+    save_model(model, model_path)
+  File "/Users/juanjose/Library/CloudStorage/GoogleDrive-jj.rincon@student.ie.edu/My Drive/term 2/MLops/1-mlops-kickoff-repo/src/utils.py", line 79, in save_model
+    pickle.dump(model, f)
+AttributeError: Can't pickle local object 'get_feature_preprocessor.<locals>.tenure_bucket'
+2026-03-09 10:18:11 | INFO | main | Starting pipeline
+2026-03-09 10:18:11 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:18:11 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:18:11 | INFO | main | Ensured directory exists: models
+2026-03-09 10:18:11 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:18:11 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:18:11 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:18:11 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:18:11 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:18:11 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:18:11 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:18:11 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:18:11 | INFO | main | Validating required columns: ['DeviceProtection', 'PaymentMethod', 'tenure', 'TechSupport', 'Dependents', 'PaperlessBilling', 'InternetService', 'PhoneService', 'Churn', 'OnlineSecurity', 'MultipleLines', 'TotalCharges', 'StreamingTV', 'Partner', 'StreamingMovies', 'MonthlyCharges', 'OnlineBackup', 'Contract', 'gender', 'SeniorCitizen']
+2026-03-09 10:18:11 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:18:11 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:18:11 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:18:11 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:18:11 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 10:18:32 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 10:38:13 | INFO | main | Starting pipeline
+2026-03-09 10:38:13 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:38:13 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:38:13 | INFO | main | Ensured directory exists: models
+2026-03-09 10:38:13 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:38:13 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:38:13 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:38:13 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:38:13 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:38:13 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:38:13 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:38:13 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:38:13 | INFO | main | Validating required columns: ['Contract', 'PaymentMethod', 'DeviceProtection', 'MultipleLines', 'Partner', 'StreamingMovies', 'StreamingTV', 'tenure', 'TechSupport', 'InternetService', 'PaperlessBilling', 'OnlineSecurity', 'gender', 'MonthlyCharges', 'SeniorCitizen', 'Churn', 'PhoneService', 'Dependents', 'TotalCharges', 'OnlineBackup']
+2026-03-09 10:38:13 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:38:13 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:38:13 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:38:13 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:38:13 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 10:38:31 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 10:38:31 | ERROR | main | Pipeline failed: Can't pickle <function get_feature_preprocessor.<locals>.tenure_bucket at 0x153566440>: it's not found as src.features.get_feature_preprocessor.<locals>.tenure_bucket
+Traceback (most recent call last):
+  File "/Users/juanjose/Library/CloudStorage/GoogleDrive-jj.rincon@student.ie.edu/My Drive/term 2/MLops/1-mlops-kickoff-repo/src/main.py", line 281, in main
+    save_model(model, model_path)
+  File "/Users/juanjose/Library/CloudStorage/GoogleDrive-jj.rincon@student.ie.edu/My Drive/term 2/MLops/1-mlops-kickoff-repo/src/utils.py", line 79, in save_model
+    joblib.dump(model, filepath)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 600, in dump
+    NumpyPickler(f, protocol=protocol).dump(value)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 487, in dump
+    self.save(obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 603, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 717, in save_reduce
+    save(state)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 972, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 998, in _batch_setitems
+    save(v)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 932, in save_list
+    self._batch_appends(obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 956, in _batch_appends
+    save(x)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 887, in save_tuple
+    save(element)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 603, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 717, in save_reduce
+    save(state)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 972, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 998, in _batch_setitems
+    save(v)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 932, in save_list
+    self._batch_appends(obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 956, in _batch_appends
+    save(x)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 887, in save_tuple
+    save(element)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 603, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 717, in save_reduce
+    save(state)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 972, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 998, in _batch_setitems
+    save(v)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 1071, in save_global
+    raise PicklingError(
+_pickle.PicklingError: Can't pickle <function get_feature_preprocessor.<locals>.tenure_bucket at 0x153566440>: it's not found as src.features.get_feature_preprocessor.<locals>.tenure_bucket
+2026-03-09 10:39:24 | INFO | main | Starting pipeline
+2026-03-09 10:39:24 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:39:24 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:39:24 | INFO | main | Ensured directory exists: models
+2026-03-09 10:39:24 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:39:24 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:39:24 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:39:24 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:39:24 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:39:24 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:39:24 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:39:24 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:39:24 | INFO | main | Validating required columns: ['StreamingTV', 'MultipleLines', 'Dependents', 'tenure', 'DeviceProtection', 'PaperlessBilling', 'StreamingMovies', 'gender', 'PhoneService', 'OnlineBackup', 'MonthlyCharges', 'TechSupport', 'Partner', 'TotalCharges', 'PaymentMethod', 'Churn', 'OnlineSecurity', 'InternetService', 'SeniorCitizen', 'Contract']
+2026-03-09 10:39:24 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:39:24 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:39:24 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:39:24 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:39:24 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 10:39:42 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-09 10:39:42 | ERROR | main | Pipeline failed: Can't pickle <function get_feature_preprocessor.<locals>.tenure_bucket at 0x142d81480>: it's not found as src.features.get_feature_preprocessor.<locals>.tenure_bucket
+Traceback (most recent call last):
+  File "/Users/juanjose/Library/CloudStorage/GoogleDrive-jj.rincon@student.ie.edu/My Drive/term 2/MLops/1-mlops-kickoff-repo/src/main.py", line 281, in main
+    save_model(model, model_path)
+  File "/Users/juanjose/Library/CloudStorage/GoogleDrive-jj.rincon@student.ie.edu/My Drive/term 2/MLops/1-mlops-kickoff-repo/src/utils.py", line 79, in save_model
+    joblib.dump(model, filepath)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 600, in dump
+    NumpyPickler(f, protocol=protocol).dump(value)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 487, in dump
+    self.save(obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 603, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 717, in save_reduce
+    save(state)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 972, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 998, in _batch_setitems
+    save(v)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 932, in save_list
+    self._batch_appends(obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 956, in _batch_appends
+    save(x)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 887, in save_tuple
+    save(element)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 603, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 717, in save_reduce
+    save(state)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 972, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 998, in _batch_setitems
+    save(v)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 932, in save_list
+    self._batch_appends(obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 956, in _batch_appends
+    save(x)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 887, in save_tuple
+    save(element)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 603, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 717, in save_reduce
+    save(state)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 972, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 998, in _batch_setitems
+    save(v)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/site-packages/joblib/numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 560, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/juanjose/miniconda3/envs/mlops_project/lib/python3.10/pickle.py", line 1071, in save_global
+    raise PicklingError(
+_pickle.PicklingError: Can't pickle <function get_feature_preprocessor.<locals>.tenure_bucket at 0x142d81480>: it's not found as src.features.get_feature_preprocessor.<locals>.tenure_bucket
+2026-03-09 10:47:02 | INFO | main | Starting pipeline
+2026-03-09 10:47:02 | INFO | main | Ensured directory exists: data/raw
+2026-03-09 10:47:02 | INFO | main | Ensured directory exists: data/processed
+2026-03-09 10:47:02 | INFO | main | Ensured directory exists: models
+2026-03-09 10:47:02 | INFO | main | Ensured directory exists: reports
+2026-03-09 10:47:02 | INFO | main | Ensured directory exists: logs
+2026-03-09 10:47:02 | INFO | main | Telco dataset detected. Switching SETTINGS to Telco schema.
+2026-03-09 10:47:02 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-09 10:47:02 | INFO | main | Raw shape: (7043, 21)
+2026-03-09 10:47:02 | INFO | main | Cleaning data (target=Churn)
+2026-03-09 10:47:02 | INFO | main | Clean shape: (7043, 20)
+2026-03-09 10:47:02 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-09 10:47:02 | INFO | main | Validating required columns: ['TechSupport', 'InternetService', 'Partner', 'tenure', 'DeviceProtection', 'OnlineSecurity', 'gender', 'PaymentMethod', 'PaperlessBilling', 'OnlineBackup', 'StreamingMovies', 'StreamingTV', 'Dependents', 'MonthlyCharges', 'TotalCharges', 'MultipleLines', 'Churn', 'SeniorCitizen', 'PhoneService', 'Contract']
+2026-03-09 10:47:02 | INFO | main | Splitting data into Train/Val/Test (leakage-safe)
+2026-03-09 10:47:02 | INFO | main | Split sizes -> train=4507, val=1127, test=1409
+2026-03-09 10:47:02 | INFO | main | Running fail-fast feature checks
+2026-03-09 10:47:02 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-09 10:47:02 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-09 10:47:21 | INFO | main | Saving model artifact to: models/model.joblib
