@@ -1,0 +1,33 @@
+2026-03-24 16:10:22,248 | __main__ | INFO | W&B run initialized: effortless-armadillo-1
+2026-03-24 16:10:22,249 | __main__ | INFO | Loading raw data...
+2026-03-24 16:10:22,253 | __main__ | ERROR | Pipeline failed.
+Traceback (most recent call last):
+  File "C:\Users\Romain\Documents\Unif\Master\IEMBDS_BusinessAnalytics_andDataScience\Real program\Term 2\MLOPs\Group assignment\1-mlops-kickoff-repo\src\main.py", line 65, in run_pipeline
+    df_raw = load_data(config["data"]["raw"])
+  File "C:\Users\Romain\Documents\Unif\Master\IEMBDS_BusinessAnalytics_andDataScience\Real program\Term 2\MLOPs\Group assignment\1-mlops-kickoff-repo\src\load_data.py", line 13, in load_data
+    return pd.read_csv(path)
+           ~~~~~~~~~~~^^^^^^
+  File "D:\Programs\Conda\Conda\envs\mlops_project\Lib\site-packages\pandas\io\parsers\readers.py", line 873, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "D:\Programs\Conda\Conda\envs\mlops_project\Lib\site-packages\pandas\io\parsers\readers.py", line 300, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "D:\Programs\Conda\Conda\envs\mlops_project\Lib\site-packages\pandas\io\parsers\readers.py", line 1645, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\Programs\Conda\Conda\envs\mlops_project\Lib\site-packages\pandas\io\parsers\readers.py", line 1904, in _make_engine
+    self.handles = get_handle(
+                   ~~~~~~~~~~^
+        f,
+        ^^
+    ...<6 lines>...
+        storage_options=self.options.get("storage_options", None),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Programs\Conda\Conda\envs\mlops_project\Lib\site-packages\pandas\io\common.py", line 926, in get_handle
+    handle = open(
+        handle,
+    ...<3 lines>...
+        newline="",
+    )
+FileNotFoundError: [Errno 2] No such file or directory: 'data/raw/dataset.csv'

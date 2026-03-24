@@ -1,0 +1,1 @@
+{"_timestamp":1.7743663710834382e+09,"train_f1":0.75,"test_f1":0.72,"_wandb":{"runtime":2},"_runtime":2,"_step":1,"data/raw_rows":7043,"data/raw_columns":21}

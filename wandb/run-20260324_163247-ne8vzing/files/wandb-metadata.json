@@ -1,0 +1,38 @@
+{
+  "os":  "Windows-11-10.0.26200-SP0",
+  "python":  "CPython 3.14.3",
+  "startedAt":  "2026-03-24T15:32:47.090958Z",
+  "program":  "-m src.main",
+  "git":  {
+    "remote":  "https://github.com/JJR9903/1-mlops-kickoff-repo.git",
+    "commit":  "8d49f87697ebc09a1d48785f41175c7dd892911b"
+  },
+  "email":  "rom.gelin@student.ie.edu",
+  "root":  "C:\\Users\\Romain\\Documents\\Unif\\Master\\IEMBDS_BusinessAnalytics_andDataScience\\Real program\\Term 2\\MLOPs\\Group assignment\\1-mlops-kickoff-repo",
+  "host":  "ROMAIN-RYZEN9",
+  "executable":  "D:\\Programs\\Conda\\Conda\\envs\\mlops_project\\python.exe",
+  "cpu_count":  8,
+  "cpu_count_logical":  16,
+  "gpu":  "NVIDIA GeForce RTX 3070 Laptop GPU",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "999186305024",
+      "used":  "810446966784"
+    }
+  },
+  "memory":  {
+    "total":  "42312429568"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3070 Laptop GPU",
+      "memoryTotal":  "8589934592",
+      "cudaCores":  5120,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-11c56ea0-b0d2-09b8-42eb-e9fbb9dbffa2"
+    }
+  ],
+  "cudaVersion":  "13.1",
+  "writerId":  "oaxhu889hhmqx0vxbca6plmi45ra9wv1"
+}

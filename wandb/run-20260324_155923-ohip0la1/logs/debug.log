@@ -1,0 +1,13 @@
+2026-03-24 15:59:23,267 INFO    MainThread:32080 [wandb_setup.py:_flush():81] Current SDK version is 0.25.1
+2026-03-24 15:59:23,268 INFO    MainThread:32080 [wandb_setup.py:_flush():81] Configure stats pid to 32080
+2026-03-24 15:59:23,268 INFO    MainThread:32080 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-03-24 15:59:23,268 INFO    MainThread:32080 [wandb_init.py:setup_run_log_directory():717] Logging user logs to C:\Users\Romain\Documents\Unif\Master\IEMBDS_BusinessAnalytics_andDataScience\Real program\Term 2\MLOPs\Group assignment\1-mlops-kickoff-repo\wandb\run-20260324_155923-ohip0la1\logs\debug.log
+2026-03-24 15:59:23,268 INFO    MainThread:32080 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to C:\Users\Romain\Documents\Unif\Master\IEMBDS_BusinessAnalytics_andDataScience\Real program\Term 2\MLOPs\Group assignment\1-mlops-kickoff-repo\wandb\run-20260324_155923-ohip0la1\logs\debug-internal.log
+2026-03-24 15:59:23,269 INFO    MainThread:32080 [wandb_init.py:init():844] calling init triggers
+2026-03-24 15:59:23,269 INFO    MainThread:32080 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'test_size': 0.2, 'seed': 42, 'raw_data_path': 'data/raw/dataset.csv', '_wandb': {}}
+2026-03-24 15:59:23,269 INFO    MainThread:32080 [wandb_init.py:init():892] starting backend
+2026-03-24 16:00:09,964 INFO    MainThread:32080 [wandb_init.py:init():895] sending inform_init request
+2026-03-24 16:00:10,077 INFO    MainThread:32080 [wandb_init.py:init():903] backend started and connected
+2026-03-24 16:00:10,079 INFO    MainThread:32080 [wandb_init.py:init():973] updated telemetry
+2026-03-24 16:00:10,197 INFO    MainThread:32080 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
