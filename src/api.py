@@ -34,12 +34,13 @@ async def lifespan(app: FastAPI):
         wandb_project = os.environ.get("WANDB_PROJECT", "mlops-churn-prediction")
         wandb_entity = os.environ.get("WANDB_ENTITY", "")
         model_alias = os.environ.get("WANDB_MODEL_ALIAS", "prod")
+        model_name = os.environ.get("WANDB_MODEL_NAME", "churn-model_v0")
         
         # Build artifact path
         if wandb_entity:
-            artifact_n = f"{wandb_entity}/{wandb_project}/churn-model:{model_alias}"
+            artifact_n = f"{wandb_entity}/{wandb_project}/{model_name}:{model_alias}"
         else:
-            artifact_n = f"{wandb_project}/churn-model:{model_alias}"
+            artifact_n = f"{wandb_project}/{model_name}:{model_alias}"
             
         try:
             api = wandb.Api()
