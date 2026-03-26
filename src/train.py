@@ -7,6 +7,7 @@ Input: pandas.DataFrame (Processed) + ColumnTransformer (Recipe).
 Output: Serialized scikit-learn Pipeline in `models/`.
 """
 import pandas as pd
+import wandb
 from src.logger import get_logger
 
 logger = get_logger(__name__)
@@ -167,6 +168,22 @@ def train_model(
 
     logger.info(f"Best Parameters: {grid_search.best_params_}")
     logger.info(f"Best CV {metric_label}: {best_score:.4f}")
+
+    # ------------------------------------------------------------------ #
+    # 5. W&B: Log training hyperparameters and CV score
+    # ------------------------------------------------------------------ #
+    if wandb.run is not None:
+        # Strip "model__" prefix for cleaner display in W&B
+        clean_params = {
+            k.replace("model__", ""): v
+            for k, v in grid_search.best_params_.items()
+        }
+        wandb.config.update({"best_params": clean_params})
+        wandb.log({
+            f"train/best_cv_{metric_label.lower()}": best_score,
+            "train/n_cv_folds": cv.get_n_splits(),
+        })
+        logger.info("Logged training metrics to W&B")
 
     # grid_search.best_estimator_ is the refitted on X_train
     return grid_search.best_estimator_

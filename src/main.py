@@ -9,6 +9,8 @@ from pathlib import Path
 import sys
 
 import pandas as pd
+import wandb
+import joblib
 from sklearn.model_selection import train_test_split
 
 from src.config import load_config
@@ -18,7 +20,6 @@ from src.validate import validate_dataframe
 from src.features import get_feature_preprocessor
 from src.train import train_model
 from src.evaluate import evaluate_model
-from src.infer import run_inference
 from src.utils import save_model, save_csv
 from src.logger import get_logger
 
@@ -76,6 +77,7 @@ def main() -> None:
     logger = get_logger("main")
 
     logger.info("Starting pipeline")
+    run = None
     try:
         _ensure_dirs(logger)
 
@@ -86,6 +88,7 @@ def main() -> None:
         features_cfg = cfg["features"]
         schema_cfg = cfg["schema"]
         target_cfg = cfg["target_config"]
+        wandb_cfg = cfg.get("wandb", {})
 
         raw_data_path = Path(paths_cfg["raw_data"])
         processed_data_path = Path(paths_cfg["processed_data"])
@@ -96,16 +99,42 @@ def main() -> None:
         predictions_path.parent.mkdir(parents=True, exist_ok=True)
         processed_data_path.parent.mkdir(parents=True, exist_ok=True)
 
+        # ── W&B: Initialize run ──────────────────────────────────
+        run = wandb.init(
+            project=wandb_cfg.get("project", "mlops-churn-prediction"),
+            job_type=wandb_cfg.get("job_type", "training-pipeline"),
+            config={
+                "problem_type": ml_cfg["problem_type"],
+                "test_size": ml_cfg["test_size"],
+                "random_state": ml_cfg["random_state"],
+                "raw_data_path": str(raw_data_path),
+                "features": features_cfg,
+            },
+        )
+        logger.info("W&B run initialized: %s", run.name)
+
         # 1. Load
         logger.info("Loading raw data from: %s", raw_data_path)
         df_raw = load_data(str(raw_data_path))
         logger.info("Raw shape: %s", df_raw.shape)
+
+        # W&B: Log data stats
+        wandb.log({
+            "data/raw_rows": df_raw.shape[0],
+            "data/raw_columns": df_raw.shape[1],
+        })
 
         # 2. Clean
         target_column = target_cfg["column"]
         logger.info("Cleaning data (target=%s)", target_column)
         df_clean = clean_dataframe(df_raw, target_column=target_column)
         logger.info("Clean shape: %s", df_clean.shape)
+
+        wandb.log({
+            "data/clean_rows": df_clean.shape[0],
+            "data/clean_columns": df_clean.shape[1],
+            "data/rows_dropped": df_raw.shape[0] - df_clean.shape[0],
+        })
 
         # 3. Validate
         logger.info("Validating required columns against schema")
@@ -133,6 +162,11 @@ def main() -> None:
         )
         logger.info("Split sizes -> train=%d, test=%d", len(X_train), len(X_test))
 
+        wandb.log({
+            "data/train_size": len(X_train),
+            "data/test_size": len(X_test),
+        })
+
         # 6. Preprocessor
         logger.info("Building feature preprocessor (unfitted)")
         preprocessor = get_feature_preprocessor(
@@ -151,9 +185,23 @@ def main() -> None:
             param_grid=None,
         )
 
-        # 8. Save model
+        # 8. Save model locally
         logger.info("Saving model artifact to: %s", model_path)
         save_model(model, model_path)
+
+        # ── W&B: Upload model artifact ───────────────────────────
+        artifact_name = wandb_cfg.get("model_artifact_name", "churn-model")
+        model_alias = wandb_cfg.get("model_alias", "prod")
+
+        model_artifact = wandb.Artifact(
+            name=artifact_name,
+            type="model",
+            description=f"Trained {ml_cfg['problem_type']} pipeline",
+        )
+        model_artifact.add_file(str(model_path))
+        wandb.log_artifact(model_artifact, aliases=["latest", model_alias])
+        logger.info("Model artifact '%s' uploaded to W&B with alias '%s'",
+                     artifact_name, model_alias)
 
         # 9. Evaluate
         logger.info("Evaluating on TEST split")
@@ -165,10 +213,22 @@ def main() -> None:
         )
         logger.info("Validation metric = %s", metric_value)
 
-        # 10. Inference
-        logger.info("Running inference on TEST sample and saving predictions")
-        predictions = run_inference(model, X_test.iloc[:20], include_proba=True)
-        save_csv(predictions.reset_index(drop=True), predictions_path)
+        # W&B: Log evaluation metrics
+        metric_label = "f1" if ml_cfg["problem_type"] == "classification" else "rmse"
+        wandb.log({f"eval/{metric_label}": metric_value})
+
+        # 10. Inference sample
+        logger.info("Running sample inference on TEST split (first 20 rows)")
+        y_pred_sample = model.predict(X_test.iloc[:20])
+        preds_df = pd.DataFrame({"prediction": y_pred_sample}, index=X_test.iloc[:20].index)
+        if hasattr(model, "predict_proba"):
+            preds_df["proba"] = model.predict_proba(X_test.iloc[:20])[:, 1]
+        save_csv(preds_df.reset_index(drop=True), predictions_path)
+
+        # W&B: Log predictions table
+        wandb.log({
+            "predictions_sample": wandb.Table(dataframe=preds_df.reset_index(drop=True))
+        })
 
         logger.info("Pipeline complete ✅")
         logger.info("=== PIPELINE FINISHED ===")
@@ -180,6 +240,11 @@ def main() -> None:
     except Exception as exc:
         logger.exception("Pipeline failed: %s", exc)
         sys.exit(1)
+    finally:
+        # W&B: Always close the run (even on failure)
+        if run is not None:
+            wandb.finish()
+            logger.info("W&B run finished.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,151 @@
+═══════════════════════════════════════════════════════════════════════════════
+  W&B INTEGRATION - QUICK START
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] 1. Navigate to repo root
+      cd C:\Users\LukaCheishvili\Documents\GitHub\MLOPS\1-mlops-kickoff-repo
+
+[ ] 2. Check .env has WANDB_API_KEY
+      cat .env  (or open in text editor)
+
+[ ] 3. Install dependencies (if needed)
+      pip install wandb scikit-learn xgboost pandas pyyaml pytest
+
+[ ] 4. Run tests
+      python test_wandb_integration.py
+
+[ ] 5. Run live pipeline
+      python -m src.main
+
+[ ] 6. Visit W&B dashboard URL from step 5
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🧪 TEST RESULTS YOU SHOULD SEE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+$ python test_wandb_integration.py
+
+✅ PASS: Import Check
+✅ PASS: W&B Unit Tests (5 tests)
+✅ PASS: Evaluate Module Tests
+✅ PASS: Train Validation Tests
+
+Total: 4/4 tests passed
+
+🎉 CORE TESTS PASSED!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🚀 LIVE PIPELINE OUTPUT YOU SHOULD SEE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+$ python -m src.main
+
+Starting pipeline
+W&B run initialized: wandb-run-q07143ms
+Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+...
+Saving model artifact to: models/model.joblib
+Model artifact 'churn-model' uploaded to W&B with alias 'prod'
+Evaluating on TEST split
+Validation metric = 0.8245
+
+=== PIPELINE FINISHED ===
+Metric (classification): 0.8245
+Saved cleaned data to: data/processed/clean.csv
+Saved model to: models/model.joblib
+Saved predictions to: reports/predictions.csv
+W&B run: https://wandb.ai/your-entity/mlops-churn-prediction/runs/run-q07143ms
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 WHAT GETS LOGGED TO W&B
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Config & Hyperparameters:
+  ├─ problem_type
+  ├─ test_size
+  ├─ random_state
+  ├─ features configuration
+  └─ best_params (after grid search)
+
+Data Statistics:
+  ├─ data/raw_rows
+  ├─ data/clean_rows
+  ├─ data/rows_dropped
+  ├─ data/train_size
+  └─ data/test_size
+
+Training Metrics:
+  ├─ train/best_cv_f1 (or train/best_cv_rmse for regression)
+  └─ train/n_cv_folds
+
+Evaluation Metrics:
+  ├─ eval/f1
+  ├─ eval/precision
+  ├─ eval/recall
+  ├─ eval/accuracy
+  └─ eval/confusion_matrix (visual plot)
+
+Model Artifacts:
+  └─ churn-model:prod (downloadable for inference)
+
+Predictions:
+  └─ predictions_sample (table with 20 samples)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔧 FILES MODIFIED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✏️  src/main.py
+   └─ wandb.init/log/log_artifact/finish across full pipeline
+
+✏️  src/train.py
+   └─ wandb.config.update + wandb.log for hyperparams & CV score
+
+✏️  src/evaluate.py
+   └─ Full metric logging (F1, precision, recall, confusion matrix, etc.)
+
+✏️  src/infer.py
+   └─ Fixed broken dual-function; supports local + W&B modes
+
+✏️  tests/test_main_wandb.py
+   └─ 5 unit tests (all passing)
+
+📝 NEW FILES
+   ├─ test_wandb_integration.py (main test runner)
+   ├─ RUN_TESTS_IN_JUPYTER.py (for notebooks)
+   ├─ WANDB_INTEGRATION_GUIDE.md (detailed docs)
+   └─ QUICK_START.txt (this file)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  COMMON ISSUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"ModuleNotFoundError: No module named 'src'"
+  → Make sure you're in repo root (where src/ folder is)
+
+"wandb: ERROR invalid api key"
+  → Check .env has valid WANDB_API_KEY value
+
+"No module named 'wandb'"
+  → pip install wandb --break-system-packages
+
+"No module named 'pytest'"
+  → pip install pytest --break-system-packages
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Full guide: WANDB_INTEGRATION_GUIDE.md
+Code changes: See # ── W&B: comments in src/main.py
+
+═══════════════════════════════════════════════════════════════════════════════
