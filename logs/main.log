@@ -2483,3 +2483,55 @@ FileNotFoundError: Data not found
 2026-03-26 20:24:41 | INFO | src.validate | PASSED  — Target classes {np.int64(0), np.int64(1)} ⊆ allowed {0, 1}
 2026-03-26 20:24:41 | INFO | src.validate | PASSED  — No negative values across 4 numeric column(s)
 2026-03-26 20:24:41 | INFO | src.validate | All checks passed ✓
+2026-03-26 22:13:39 | INFO | main | Starting pipeline
+2026-03-26 22:13:39 | INFO | main | Ensured directory exists: data/raw
+2026-03-26 22:13:39 | INFO | main | Ensured directory exists: data/processed
+2026-03-26 22:13:39 | INFO | main | Ensured directory exists: models
+2026-03-26 22:13:39 | INFO | main | Ensured directory exists: reports
+2026-03-26 22:13:39 | INFO | main | Ensured directory exists: logs
+2026-03-26 22:13:41 | INFO | main | W&B run initialized: cosmic-eon-11
+2026-03-26 22:13:41 | INFO | main | Loading raw data from: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+2026-03-26 22:13:41 | WARNING | src.load_data | 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Reference data/raw/dataset.csv not found.
+Dummy dataset created for scaffolding ONLY.
+Path: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+Columns are hardcoded: num_feature, cat_feature, target
+You MUST replace this with your real dataset and update config.yaml.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+2026-03-26 22:13:41 | INFO | main | Raw shape: (7043, 21)
+2026-03-26 22:13:41 | INFO | main | Cleaning data (target=Churn)
+2026-03-26 22:13:41 | INFO | src.clean_data | Cleaning dataframe (baseline: identity copy)
+2026-03-26 22:13:41 | INFO | src.clean_data | Dropping ID columns: ['customerID']
+2026-03-26 22:13:41 | INFO | main | Clean shape: (7043, 20)
+2026-03-26 22:13:41 | INFO | main | Validating required columns against schema
+2026-03-26 22:13:41 | INFO | src.validate | Running data quality checks...
+2026-03-26 22:13:41 | INFO | src.validate | [validate] PASSED  — Shape: 7,043 rows × 20 cols
+2026-03-26 22:13:41 | INFO | src.validate | PASSED  — No fully-NaN rows found
+2026-03-26 22:13:41 | INFO | src.validate | PASSED  — Schema OK for 20 column(s) (NaN policy enforced per column)
+2026-03-26 22:13:41 | INFO | src.validate | PASSED  — Target column 'Churn' present
+2026-03-26 22:13:41 | INFO | src.validate | PASSED  — Target classes {np.float64(0.0), np.float64(1.0)} ⊆ allowed {0, 1}
+2026-03-26 22:13:41 | INFO | src.validate | PASSED  — No negative values across 5 numeric column(s)
+2026-03-26 22:13:41 | INFO | src.validate | All checks passed ✓
+2026-03-26 22:13:41 | INFO | main | Saving processed data to: data/processed/clean.csv
+2026-03-26 22:13:41 | INFO | main | Splitting data into Train/Test
+2026-03-26 22:13:41 | INFO | main | Split sizes -> train=5634, test=1409
+2026-03-26 22:13:41 | INFO | main | Building feature preprocessor (unfitted)
+2026-03-26 22:13:41 | INFO | main | Training model (fit only on TRAIN split)
+2026-03-26 22:13:41 | INFO | src.train | Starting model training | problem_type='classification'
+2026-03-26 22:14:29 | INFO | src.train | Best Parameters: {'model__colsample_bytree': 0.7, 'model__gamma': 0, 'model__learning_rate': 0.01, 'model__max_depth': 3, 'model__n_estimators': 500, 'model__subsample': 0.7}
+2026-03-26 22:14:29 | INFO | src.train | Best CV F1: 0.5914
+2026-03-26 22:14:29 | INFO | src.train | Logged training metrics to W&B
+2026-03-26 22:14:29 | INFO | main | Saving model artifact to: models/model.joblib
+2026-03-26 22:14:30 | INFO | main | Model artifact 'churn-model' uploaded to W&B with alias 'prod'
+2026-03-26 22:14:30 | INFO | main | Evaluating on TEST split
+2026-03-26 22:14:31 | INFO | main | Validation metric = 0.5792682926829268
+2026-03-26 22:14:31 | INFO | main | Running sample inference on TEST split (first 20 rows)
+2026-03-26 22:14:31 | INFO | main | Pipeline complete ✅
+2026-03-26 22:14:31 | INFO | main | === PIPELINE FINISHED ===
+2026-03-26 22:14:31 | INFO | main | Metric (classification): 0.5792682926829268
+2026-03-26 22:14:31 | INFO | main | Saved cleaned data to: data/processed/clean.csv
+2026-03-26 22:14:31 | INFO | main | Saved model to: models/model.joblib
+2026-03-26 22:14:31 | INFO | main | Saved predictions to: reports/predictions.csv
+2026-03-26 22:14:35 | INFO | main | W&B run finished.
