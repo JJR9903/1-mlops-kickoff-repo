@@ -25,12 +25,7 @@ jobs:
           environment-file: environment.yml
           python-version: "3.10"
 
-      # 3. Install dependencies
-      - name: Install dependencies
-        shell: bash -l {0}
-        run: |
-          conda activate mlops_project
-          pip install -e .
+
 
       # 4. Run all tests
       - name: Run pytest

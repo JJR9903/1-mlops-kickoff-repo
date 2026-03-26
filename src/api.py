@@ -4,7 +4,7 @@ from typing import List
 import pandas as pd
 import joblib
 from fastapi import FastAPI, HTTPException
-
+import numpy as np
 from src.clean_data import clean_dataframe
 from src.validate import validate_dataframe
 from src.infer import run_inference
