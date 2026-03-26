@@ -4,7 +4,7 @@ import logging
 from nicegui import ui, events
 from fastapi import FastAPI
 from src.schemas import TelcoChurnInput
-
+import numpy as np
 # Vodafone-inspired colors
 PRIMARY_RED = "#E60000"
 BACKGROUND_WHITE = "#FFFFFF"
