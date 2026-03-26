@@ -13,6 +13,8 @@ import wandb
 import joblib
 from sklearn.model_selection import train_test_split
 
+from src.app_secrets import get_wandb_api_key
+get_wandb_api_key() # Load environment variables
 from src.config import load_config
 from src.load_data import load_data
 from src.clean_data import clean_dataframe
@@ -182,7 +184,7 @@ def main() -> None:
             y_train=y_train,
             preprocessor=preprocessor,
             problem_type=ml_cfg["problem_type"],
-            param_grid=None,
+            param_grid=ml_cfg.get("param_grid"),
         )
 
         # 8. Save model locally

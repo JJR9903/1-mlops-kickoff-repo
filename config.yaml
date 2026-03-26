@@ -13,11 +13,18 @@ ml:
 
   seed: 42
   random_state: 42
+  param_grid:
+    model__max_depth: [3, 6, 9]
+    model__learning_rate: [0.01, 0.15]
+    model__n_estimators: [100, 300, 500]
+    model__subsample: [0.7, 0.9]
+    model__colsample_bytree: [0.7, 0.9]
+    model__gamma: [0, 0.1]
 
 wandb:
   project: "mlops-churn-prediction"
   job_type: "training-pipeline"
-  model_artifact_name: "churn-model"
+  model_artifact_name: "churn-model_v0"
   model_alias: "prod"
   
   

@@ -22,14 +22,42 @@ from src.schemas import TelcoChurnInput, PredictResponse
 # ==========================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import os
     model_path = Path("models/model.joblib")
+    model_source = os.environ.get("MODEL_SOURCE", "local")
+    
+    app.state.model_source = "local"
+    
+    if model_source == "wandb":
+        import wandb
+        print("Downloading production model from W&B...")
+        wandb_project = os.environ.get("WANDB_PROJECT", "mlops-churn-prediction")
+        wandb_entity = os.environ.get("WANDB_ENTITY", "")
+        model_alias = os.environ.get("WANDB_MODEL_ALIAS", "prod")
+        
+        # Build artifact path
+        if wandb_entity:
+            artifact_n = f"{wandb_entity}/{wandb_project}/churn-model:{model_alias}"
+        else:
+            artifact_n = f"{wandb_project}/churn-model:{model_alias}"
+            
+        try:
+            api = wandb.Api()
+            artifact = api.artifact(artifact_n, type="model")
+            artifact.download(root="models")
+            print(f"Successfully downloaded {artifact_n} from W&B.")
+            app.state.model_source = f"wandb ({artifact_n})"
+        except Exception as e:
+            print(f"Failed to download model from W&B: {e}")
+            app.state.model_source = "local (fallback)"
+
     if not model_path.exists():
         # Will start but endpoint will fail. Can also choose to raise exception here.
         app.state.model = None
         print(f"Warning: Model not found at {model_path}.")
     else:
         app.state.model = joblib.load(model_path)
-        print("Model loaded successfully into app.state.")
+        print(f"Model ({app.state.model_source}) loaded successfully into app.state.")
     yield
     # Cleanup on shutdown
     app.state.model = None
@@ -52,7 +80,11 @@ def health_check():
     """
     if getattr(app.state, "model", None) is None:
         return {"status": "unhealthy", "reason": "Model is not loaded."}
-    return {"status": "ok", "model_version": "v1"}
+    return {
+        "status": "ok", 
+        "model_version": "v1",
+        "model_source": getattr(app.state, "model_source", "local")
+    }
 
 @app.post("/predict", response_model=List[PredictResponse])
 def predict(payload: List[TelcoChurnInput]):
