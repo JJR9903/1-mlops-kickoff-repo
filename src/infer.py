@@ -12,7 +12,7 @@ Supports two modes:
 
 import os
 import logging
-
+import numpy as np
 import yaml
 import joblib
 import pandas as pd
