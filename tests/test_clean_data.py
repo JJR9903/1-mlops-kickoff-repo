@@ -81,6 +81,7 @@ def test_clean_dataframe_target_mapping():
     Test that target column is mapped from Yes/No/True/False to 1/0.
     """
     df_raw = pd.DataFrame({
+        "dummy": [1, 2, 3, 4, 5],
         "target": ["Yes", "No", "False", "True", np.nan]
     })
 

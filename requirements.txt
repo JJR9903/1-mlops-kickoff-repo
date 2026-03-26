@@ -1,0 +1,11 @@
+pandas
+scikit-learn
+openpyxl
+pyyaml
+pytest
+pytest-cov
+black
+flake8
+wandb
+python-dotenv
+ruff

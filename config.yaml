@@ -1,10 +1,82 @@
-# MLOps Project Configuration
-# This file will eventually control paths, hyperparameters, and toggles.
+project:
+  name: mlops-kickoff
 
-data:
-  raw: "data/raw/dataset.csv"
-  processed: "data/processed/clean.csv"
+paths:
+  raw_data: "data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+  processed_data: "data/processed/clean.csv"
+  model_path: "models/model.joblib"
+  predictions_path: "reports/predictions.csv"
 
-train:
+ml:
+  problem_type: "classification"
   test_size: 0.2
+
   seed: 42
+  random_state: 42
+  param_grid:
+    model__max_depth: [3, 6, 9]
+    model__learning_rate: [0.01, 0.15]
+    model__n_estimators: [100, 300, 500]
+    model__subsample: [0.7, 0.9]
+    model__colsample_bytree: [0.7, 0.9]
+    model__gamma: [0, 0.1]
+
+wandb:
+  project: "mlops-churn-prediction"
+  job_type: "training-pipeline"
+  model_artifact_name: "churn-model_v0"
+  model_alias: "prod"
+  
+  
+
+
+features:
+  quantile_bin:
+    - tenure
+  numeric_passthrough:
+    - SeniorCitizen
+    - MonthlyCharges
+    - TotalCharges
+  categorical_onehot:
+    - gender
+    - Partner
+    - Dependents
+    - PhoneService
+    - MultipleLines
+    - InternetService
+    - OnlineSecurity
+    - OnlineBackup
+    - DeviceProtection
+    - TechSupport
+    - StreamingTV
+    - StreamingMovies
+    - Contract
+    - PaperlessBilling
+    - PaymentMethod
+
+schema:
+  gender: {type: categorical, accept_nan: false}
+  SeniorCitizen: {type: numeric, accept_nan: false}
+  Partner: {type: categorical, accept_nan: false}
+  Dependents: {type: categorical, accept_nan: false}
+  tenure: {type: numeric, accept_nan: false}
+  PhoneService: {type: categorical, accept_nan: false}
+  MultipleLines: {type: categorical, accept_nan: false}
+  InternetService: {type: categorical, accept_nan: false}
+  OnlineSecurity: {type: categorical, accept_nan: false}
+  OnlineBackup: {type: categorical, accept_nan: false}
+  DeviceProtection: {type: categorical, accept_nan: false}
+  TechSupport: {type: categorical, accept_nan: false}
+  StreamingTV: {type: categorical, accept_nan: false}
+  StreamingMovies: {type: categorical, accept_nan: false}
+  Contract: {type: categorical, accept_nan: false}
+  PaperlessBilling: {type: categorical, accept_nan: false}
+  PaymentMethod: {type: categorical, accept_nan: false}
+  MonthlyCharges: {type: numeric, accept_nan: false}
+  TotalCharges: {type: numeric, accept_nan: true}
+  Churn: {type: numeric, accept_nan: false}
+
+target_config:
+  column: "Churn"
+  type: "classification"
+  allowed_classes: [0, 1]

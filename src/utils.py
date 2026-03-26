@@ -15,38 +15,6 @@ from typing import Any
 import pandas as pd
 
 
-def get_logger(name: str, log_file: str = "logs/main.log") -> logging.Logger:
-    """
-    Create a simple, reusable logger for modules.
-    - Logs to both console and a file for traceability.
-    """
-    logger = logging.getLogger(name)
-    if logger.handlers:
-        return logger  # prevents duplicate handlers in notebooks
-
-    logger.setLevel(logging.INFO)
-
-    Path(log_file).parent.mkdir(parents=True, exist_ok=True)
-
-    formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-
-    fh = logging.FileHandler(log_file, encoding="utf-8")
-    fh.setLevel(logging.INFO)
-    fh.setFormatter(formatter)
-
-    sh = logging.StreamHandler()
-    sh.setLevel(logging.INFO)
-    sh.setFormatter(formatter)
-
-    logger.addHandler(fh)
-    logger.addHandler(sh)
-    logger.propagate = False
-    return logger
-
-
 def load_csv(filepath: Path) -> pd.DataFrame:
     """
     Load a CSV from disk with a consistent contract.

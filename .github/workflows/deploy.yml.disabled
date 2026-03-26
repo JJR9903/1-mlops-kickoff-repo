@@ -1,0 +1,20 @@
+# Deployment: Build, Push, and Deploy on Release
+name: Deployment Pipeline
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Trigger a Render deployment via their Deploy Hook API
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}

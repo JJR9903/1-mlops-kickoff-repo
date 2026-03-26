@@ -150,8 +150,9 @@ class TestValidateAndFillParamGrid:
         # The explicitly provided key must keep its value, not the default
         assert result["model__max_depth"] == [3]
 
+    @patch("src.train.logger.warning")
     def test_fill_in_prints_warning_for_each_missing_key(
-        self, xgb_classifier, default_grid, capsys
+        self, mock_warn, xgb_classifier, default_grid
     ):
         """A printed warning is emitted for every key that is auto-filled."""
         partial_grid = {"model__max_depth": [3]}
@@ -160,10 +161,9 @@ class TestValidateAndFillParamGrid:
             estimator=xgb_classifier,
             default_grid=default_grid,
         )
-        captured = capsys.readouterr().out
         # One WARNING line per missing key
         missing_count = len(default_grid) - 1  # all except max_depth
-        assert captured.count("WARNING") == missing_count
+        assert mock_warn.call_count == missing_count
 
     def test_empty_param_grid_fills_everything_from_default(
         self, xgb_classifier, default_grid
@@ -222,8 +222,9 @@ class TestValidateAndFillParamGrid:
         assert "max_depth" in error_msg
         assert "fake_param" in error_msg
 
+    @patch("src.train.logger.warning")
     def test_valid_partial_grid_no_errors_no_warning_for_provided_key(
-        self, xgb_classifier, default_grid, capsys
+        self, mock_warn, xgb_classifier, default_grid
     ):
         """Provided valid key should NOT produce a warning;
         only absent keys do."""
@@ -233,8 +234,9 @@ class TestValidateAndFillParamGrid:
             estimator=xgb_classifier,
             default_grid=default_grid,
         )
-        captured = capsys.readouterr().out
-        assert "model__max_depth" not in captured  # not warned about
+        # Make sure none of the mock calls mention "model__max_depth"
+        call_args_list = mock_warn.call_args_list
+        assert not any("model__max_depth" in call[0][0] for call in call_args_list)
 
     def test_works_with_xgb_regressor(self, xgb_regressor, default_grid):
         """Validation must work for XGBRegressor

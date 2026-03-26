@@ -1,5 +1,8 @@
 from typing import Dict
 import pandas as pd
+from src.logger import get_logger
+
+logger = get_logger(__name__)
 
 # ── Supported dtype-kind labels and their pandas checks ──────────────────────
 # Students can extend this map to add new kinds (e.g. "boolean", "datetime").
@@ -72,8 +75,7 @@ def validate_dataframe(
       contract self-documenting and enforced by the call signature,
       not by runtime logic.
     """
-    print("[validate] Running data quality checks...")
-    # TODO: replace above with logging later
+    logger.info("Running data quality checks...")
 
     # ─────────────────────────────────────────────────────────────────────────
     # Validate target_config structure up front
@@ -106,7 +108,7 @@ def validate_dataframe(
         f"[validate] PASSED  — Shape: {df.shape[0]:,} rows × "
         f"{df.shape[1]} cols"
     )
-    print(msg)  # TODO: replace with logging later
+    logger.info(msg)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 2 — No fully-NaN rows
@@ -123,8 +125,7 @@ def validate_dataframe(
             f"clean_data.py:\n    df.dropna(how='all', inplace=True)"
         )
         raise ValueError(msg)
-    print("[validate] PASSED  — No fully-NaN rows found")
-    # TODO: replace above with logging later
+    logger.info("PASSED  — No fully-NaN rows found")
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 3 — Schema: presence, dtype kind, and NaN policy per column
@@ -173,10 +174,10 @@ def validate_dataframe(
                 schema_errors.append(msg)
             else:
                 # Imputable NaN — expected, handled after train-test split
-                print(
-                    f"[validate] INFO   — '{col}' has {n_nan} NaN(s) "
+                logger.info(
+                    f"'{col}' has {n_nan} NaN(s) "
                     f"(accept_nan=True → will be imputed downstream)"
-                )  # TODO: replace with logging later
+                )
 
     if schema_errors:
         raise ValueError(
@@ -186,10 +187,10 @@ def validate_dataframe(
             + "\n".join(f"    {c}: {df[c].dtype}" for c in df.columns)
         )
 
-    print(
-        f"[validate] PASSED  — Schema OK for {len(schema)} column(s) "
+    logger.info(
+        f"PASSED  — Schema OK for {len(schema)} column(s) "
         f"(NaN policy enforced per column)"
-    )  # TODO: replace with logging later
+    )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 4 — Target column present
@@ -203,9 +204,9 @@ def validate_dataframe(
             f"matches the column name in your CSV."
         )
         raise ValueError(msg)
-    print(
-        f"[validate] PASSED  — Target column '{target_column}' present"
-    )  # TODO: replace with logging later
+    logger.info(
+        f"PASSED  — Target column '{target_column}' present"
+    )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Check 5 — Target validation (branches on task type)
@@ -230,18 +231,18 @@ def validate_dataframe(
                     f"correctly (e.g. Yes/No → 1/0) before validation."
                 )
                 raise ValueError(msg)
-            print(
-                f"[validate] PASSED  — Target classes {actual_classes} "
+            logger.info(
+                f"PASSED  — Target classes {actual_classes} "
                 f"⊆ allowed {allowed_set}"
-            )  # TODO: replace with logging later
+            )
 
         else:
             # No allowed_classes provided — just report what's found
-            print(
-                f"[validate] INFO   — No allowed_classes specified for "
+            logger.info(
+                f"No allowed_classes specified for "
                 f"classification target. Found classes: "
                 f"{set(target_series.unique())}"
-            )  # TODO: replace with logging later
+            )
 
     elif target_type == "regression":
 
@@ -254,7 +255,7 @@ def validate_dataframe(
             )
             raise ValueError(msg)
         msg = f"[validate] PASSED  — Target '{target_column}' is numeric"
-        print(msg)  # TODO: replace with logging later
+        logger.info(msg)
 
         # 4b — Optional range check
         target_range = target_config.get("range")
@@ -274,11 +275,11 @@ def validate_dataframe(
                     f"  → Inspect and clip/drop outliers in clean_data.py."
                 )
                 raise ValueError(msg)
-            print(
-                f"[validate] PASSED  — Regression target within range "
+            logger.info(
+                f"PASSED  — Regression target within range "
                 f"[{lo}, {hi}]  (min={target_series.min():.4g}, "
                 f"max={target_series.max():.4g})"
-            )  # TODO: replace with logging later
+            )
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -297,10 +298,10 @@ def validate_dataframe(
             + "\n  → Fix in clean_data.py (clip or drop negative rows)."
         )
         raise ValueError(msg)
-    print(
-        f"[validate] PASSED  — No negative values across "
+    logger.info(
+        f"PASSED  — No negative values across "
         f"{len(numeric_cols)} numeric column(s)"
-    )  # TODO: replace with logging later
+    )
 
-    print("[validate] All checks passed ✓")  # TODO: replace with logging later
+    logger.info("All checks passed ✓")
     return True

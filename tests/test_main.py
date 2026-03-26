@@ -55,7 +55,7 @@ def test_main_orchestrates_and_writes_artifacts(tmp_path, monkeypatch):
     )
 
     # ---- Fake implementations of teammates' pipeline steps ----
-    def load_raw_data(path: Path):
+    def load_data(path: str):
         return df
 
     def clean_dataframe(df_in: pd.DataFrame, target_column: str):
@@ -67,19 +67,19 @@ def test_main_orchestrates_and_writes_artifacts(tmp_path, monkeypatch):
     def get_feature_preprocessor(**kwargs):
         return "dummy_preprocessor"
 
-    def train_model(X_train, y_train, preprocessor, problem_type):
+    def train_model(X_train, y_train, preprocessor, problem_type, param_grid):
         return DummyModel()
 
     def evaluate_model(*args, **kwargs):
         return 0.99
 
-    def run_inference(model, X_infer):
+    def run_inference(model, X_infer, include_proba):
         preds = model.predict(X_infer)
         return pd.DataFrame({"prediction": preds})
 
     # ---- Install fake modules so `import src.main` won't fail ----
     _install_fake_module(
-        monkeypatch, "src.load_data", {"load_raw_data": load_raw_data}
+        monkeypatch, "src.load_data", {"load_data": load_data}
     )
     _install_fake_module(
         monkeypatch, "src.clean_data", {"clean_dataframe": clean_dataframe}
@@ -104,43 +104,38 @@ def test_main_orchestrates_and_writes_artifacts(tmp_path, monkeypatch):
     # ---- Import main AFTER stubbing dependencies ----
     import src.main as main_module
 
-    # Redirect SETTINGS to tmp_path so test doesn't touch repo folders
-    monkeypatch.setattr(
-        main_module,
-        "SETTINGS",
-        {
-            "is_example_config": True,
-            "problem_type": "classification",
-            "target_column": "target",
-            "raw_data_path": str(tmp_path / "dataset.csv"),
-            "processed_data_path": str(tmp_path / "clean.csv"),
+    # Create a dummy config directly in the test to mock load_config
+    dummy_config = {
+        "paths": {
+            "raw_data": str(tmp_path / "dataset.csv"),
+            "processed_data": str(tmp_path / "clean.csv"),
             "model_path": str(tmp_path / "model.pkl"),
             "predictions_path": str(tmp_path / "preds.csv"),
-            "random_state": 42,
-            "test_size": 0.25,
-            "val_size": 0.25,
-            "features": {
-                "quantile_bin": ["num_feature"],
-                "categorical_onehot": ["cat_feature"],
-                "numeric_passthrough": [],
-                "n_bins": 3,
-            },
-            "schema": {
-                "num_feature": {"type": "numeric", "accept_nan": False},
-                "cat_feature": {"type": "categorical", "accept_nan": False},
-            },
-            "target_config": {
-                "column": "target",
-                "type": "classification",
-                "allowed_classes": [0, 1]
-            },
         },
-    )
+        "ml": {
+            "problem_type": "classification",
+            "test_size": 0.25,
+            "random_state": 42,
+        },
+        "features": {
+            "quantile_bin": ["num_feature"],
+            "categorical_onehot": ["cat_feature"],
+            "numeric_passthrough": [],
+            "n_bins": 3,
+        },
+        "schema": {
+            "num_feature": {"type": "numeric", "accept_nan": False},
+            "cat_feature": {"type": "categorical", "accept_nan": False},
+        },
+        "target_config": {
+            "column": "target",
+            "type": "classification",
+            "allowed_classes": [0, 1]
+        },
+    }
 
-    # Prevent dynamic discovery from overriding our dummy SETTINGS
-    monkeypatch.setattr(
-        main_module, "_maybe_switch_to_telco", lambda logger: None
-    )
+    # Redirect load_config to return our dummy config
+    monkeypatch.setattr(main_module, "load_config", lambda: dummy_config)
 
     # ---- Run pipeline ----
     main_module.main()

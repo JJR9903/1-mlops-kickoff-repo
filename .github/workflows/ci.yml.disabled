@@ -1,0 +1,47 @@
+# Continuous Integration: Run tests on every Pull Request
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Download the code from the PR
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python + Conda
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: latest
+          auto-activate-base: true
+          activate-environment: mlops_project
+          environment-file: environment.yml
+          python-version: "3.10"
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          conda activate mlops_project
+          pip install -e .
+
+      # 4. Run all tests
+      - name: Run pytest
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        shell: bash -l {0}
+        run: |
+          conda activate mlops_project
+          pytest tests/ -v --tb=short
+
+      # 5. Report results (automatic - GitHub sees pass/fail)
+      - name: Test Summary
+        if: always()
+        run: echo "✅ Tests completed. Check above for results."
