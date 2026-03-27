@@ -31,10 +31,10 @@ async def lifespan(app: FastAPI):
     if model_source == "wandb":
         import wandb
         print("Downloading production model from W&B...")
-        wandb_entity = os.environ.get("WANDB_ENTITY", "")
+        wandb_entity = os.environ.get("WANDB_ENTITY", "rom-gelin-ie-university")
         wandb_project = os.environ.get("WANDB_PROJECT", "mlops-churn-prediction")        
-        model_alias = os.environ.get("WANDB_MODEL_ALIAS", "prod")
         model_name = os.environ.get("WANDB_MODEL_NAME", "churn-model")
+        model_alias = os.environ.get("WANDB_MODEL_ALIAS", "prod")        
         
         # Build artifact path
         if wandb_entity:
