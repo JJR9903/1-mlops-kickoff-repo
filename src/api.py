@@ -5,6 +5,7 @@ import pandas as pd
 import joblib
 from fastapi import FastAPI, HTTPException
 import numpy as np
+import wandb
 from src.clean_data import clean_dataframe
 from src.validate import validate_dataframe
 from src.infer import run_inference
@@ -23,46 +24,62 @@ from src.schemas import TelcoChurnInput, PredictResponse
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     import os
-    model_path = Path("models/model.joblib")
+    # 1. Path preparation
+    model_dir = Path("models")
+    model_path = model_dir / "model.joblib"
     model_source = os.environ.get("MODEL_SOURCE", "local")
     
+    # Ensure directory exists
+    model_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Ensured directory exists: {model_dir.absolute()}")
+    
+    app.state.model = None
     app.state.model_source = "local"
     
+    # 2. Optional: Download from W&B
     if model_source == "wandb":
-        import wandb
-        print("Downloading production model from W&B...")
+        print("MODEL_SOURCE is 'wandb'. "
+              "Attempting to download production model...")
         wandb_entity = os.environ.get("WANDB_ENTITY", "rom-gelin-ie-university")
         wandb_project = os.environ.get("WANDB_PROJECT", "mlops-churn-prediction")        
         model_name = os.environ.get("WANDB_MODEL_NAME", "churn-model")
         model_alias = os.environ.get("WANDB_MODEL_ALIAS", "prod")        
         
-        # Build artifact path
-        if wandb_entity:
-            artifact_n = f"{wandb_entity}/{wandb_project}/{model_name}:{model_alias}"
-        else:
+        artifact_n = f"{wandb_entity}/{wandb_project}/{model_name}:{model_alias}"
+        if not wandb_entity:
             artifact_n = f"{wandb_project}/{model_name}:{model_alias}"
             
         try:
             api = wandb.Api()
+            print(f"Connecting to W&B to fetch artifact: {artifact_n}")
             artifact = api.artifact(artifact_n, type="model")
-            version = artifact.version
-            aliases = artifact.aliases
-            artifact.download(root="models")
-            print(f"Successfully downloaded {artifact_n} from W&B.")            
+            artifact.download(root=str(model_dir))
+            
             app.state.model_source = f"wandb ({artifact_n})"
-            app.state.model_version = f"wandb version ({version})"
-            app.state.model_aliases = f"wandb aliases ({aliases})"
+            app.state.model_version = f"wandb version ({artifact.version})"
+            app.state.model_aliases = f"wandb aliases ({artifact.aliases})"
+            print(f"Successfully downloaded {artifact_n} "
+                  f"to {model_path.absolute()}")
         except Exception as e:
             print(f"Failed to download model from W&B: {e}")
             app.state.model_source = "local (fallback)"
 
+    # 3. Final Load
+    print(f"Searching for model file at: {model_path.absolute()}")
     if not model_path.exists():
-        # Will start but endpoint will fail. Can also choose to raise exception here.
+        print(f"CRITICAL: Model file NOT found at {model_path.absolute()}. "
+              "Health check will fail.")
         app.state.model = None
-        print(f"Warning: Model not found at {model_path}.")
     else:
-        app.state.model = joblib.load(model_path)
-        print(f"Model ({app.state.model_source}) loaded successfully into app.state.")
+        try:
+            app.state.model = joblib.load(model_path)
+            print("SUCCESS: Model loaded into app.state "
+                  f"from {model_path.absolute()}")
+            print(f"Source: {app.state.model_source}")
+        except Exception as e:
+            print(f"ERROR: Failed to load model file: {e}")
+            app.state.model = None
+
     yield
     # Cleanup on shutdown
     app.state.model = None
