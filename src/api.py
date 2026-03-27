@@ -31,10 +31,10 @@ async def lifespan(app: FastAPI):
     if model_source == "wandb":
         import wandb
         print("Downloading production model from W&B...")
-        wandb_project = os.environ.get("WANDB_PROJECT", "mlops-churn-prediction")
         wandb_entity = os.environ.get("WANDB_ENTITY", "")
+        wandb_project = os.environ.get("WANDB_PROJECT", "mlops-churn-prediction")        
         model_alias = os.environ.get("WANDB_MODEL_ALIAS", "prod")
-        model_name = os.environ.get("WANDB_MODEL_NAME", "churn-model_v0")
+        model_name = os.environ.get("WANDB_MODEL_NAME", "churn-model")
         
         # Build artifact path
         if wandb_entity:
@@ -45,9 +45,13 @@ async def lifespan(app: FastAPI):
         try:
             api = wandb.Api()
             artifact = api.artifact(artifact_n, type="model")
+            version = artifact.version
+            aliases = artifact.aliases
             artifact.download(root="models")
-            print(f"Successfully downloaded {artifact_n} from W&B.")
+            print(f"Successfully downloaded {artifact_n} from W&B.")            
             app.state.model_source = f"wandb ({artifact_n})"
+            app.state.model_version = f"wandb version ({version})"
+            app.state.model_aliases = f"wandb aliases ({aliases})"
         except Exception as e:
             print(f"Failed to download model from W&B: {e}")
             app.state.model_source = "local (fallback)"
@@ -83,8 +87,9 @@ def health_check():
         return {"status": "unhealthy", "reason": "Model is not loaded."}
     return {
         "status": "ok", 
-        "model_version": "v1",
-        "model_source": getattr(app.state, "model_source", "local")
+        "model_version": getattr(app.state, "model_version", "local"),
+        "model_source": getattr(app.state, "model_source", "local"),
+        "model_aliases": getattr(app.state, "model_aliases", "local")
     }
 
 @app.post("/predict", response_model=List[PredictResponse])
