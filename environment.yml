@@ -25,3 +25,4 @@ dependencies:
       - wandb
       - python-dotenv
       - nicegui
+      - pytest-asyncio

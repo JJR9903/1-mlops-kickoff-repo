@@ -10,7 +10,7 @@ COPY conda-lock.yml .
 
 RUN conda install -c conda-forge conda-lock -y && \
     conda-lock install -n mlops conda-lock.yml && \
-    /opt/conda/envs/mlops/bin/pip install nicegui wandb python-dotenv && \
+    /opt/conda/envs/mlops/bin/pip install nicegui wandb python-dotenv pytest-asyncio && \
     apt-get update && \
     apt-get install -y curl && \
     apt-get clean && \
